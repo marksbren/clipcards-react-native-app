@@ -133,7 +133,7 @@ export default class CaptionPlayer extends React.Component {
     var newBookmarkLookup = this.state.bookmarkLookup
     if(this._wordIsSaved(wordKey)){
       for (let [key, item] of newBookmarkedWords.entries()) {
-        if(item.captionDataId === this.state.captionData[this.state.captionIndex]._id && item.wordIndex === i){
+        if(item.captionDataId === this.state.captionData[this.state.captionIndex]["_id"] && item.wordIndex === i){
           newBookmarkedWords.splice(key,1)
           break
         }
@@ -141,7 +141,7 @@ export default class CaptionPlayer extends React.Component {
       delete newBookmarkLookup[wordKey]
     }else{
       var newBookmark = {
-        captionDataId: this.state.captionData[this.state.captionIndex]._id,
+        captionDataId: this.state.captionData[this.state.captionIndex]["_id"],
         wordIndex: i
       }
       newBookmarkedWords.push(newBookmark)
@@ -162,7 +162,15 @@ export default class CaptionPlayer extends React.Component {
   }
 
   _generateWordKey(i){
-    return this.state.captionData[this.state.captionIndex]._id + "|" + i
+    return this.state.captionData[this.state.captionIndex]["_id"] + "|" + i
+  }
+
+  onChangeState(e){
+    if( !this.state.playVideo && e.state === "playing"){
+      this.playPause()
+    }else if( this.state.playVideo && e.state === "paused" ){
+      this.playPause()
+    }
   }
 
   playPause(){
@@ -195,15 +203,17 @@ export default class CaptionPlayer extends React.Component {
           showFullscreenButton={false}
           modestbranding={true}
           showinfo={false}
+          origin="http://www.youtube.com"
           rel={false}
           onReady={e => this.setState({ isReady: true })}
-          onChangeState={e => this.setState({ status: e.state })}
+          onChangeState={e => this.onChangeState(e)}
           onChangeQuality={e => this.setState({ quality: e.quality })}
           onError={e => this.setState({ error: e.error })}
           style={styles.youtubeContainer}
         />
         <View style={styles.videoControlContainer}>
           <Button
+            key={0}
             buttonStyle={[styles.controlButton]}
             type="outline"
             icon={
@@ -212,6 +222,7 @@ export default class CaptionPlayer extends React.Component {
             onPress={() => this.jumpBack()}
           />
           <Button
+            key={1}
             buttonStyle={[styles.controlButton]}
             type="outline"
             icon={
@@ -220,6 +231,7 @@ export default class CaptionPlayer extends React.Component {
             onPress={() => this.playPause()}
           />
           <Button
+            key={2}
             buttonStyle={[styles.controlButton]}
             type="outline"
             icon={
@@ -231,27 +243,19 @@ export default class CaptionPlayer extends React.Component {
         <View style={styles.wordButtonContainer}>
         {
           this.state.captionData[this.state.captionIndex].words.map((word, i) => (
-            <View>
-            {word.type === "space" &&
-              <Text key={i}>{word.text[0]}</Text>
-            }
-            {word.type === "punctuation" &&
-              <Text key={i}>{word.text[0]}</Text>
-            }
-            {word.type === "default" &&
-              <Text key={i}>{word.text[0]}</Text>
-            }
-            {word.type === "word" &&
+            <View key={i}>
+            {word.type === "word" ? (
               <Button
                 key={i}
                 title={word.text[this.state.captionScriptIndex]}
                 buttonStyle={this._wordIsSaved(this._generateWordKey(i)) ? styles.bookmarkedButton : styles.unbookmarkedButton }
-                raised
                 type="outline"
                 containerStyle={[styles.wordButton]}
                 onPress={(data) => this.saveWordToggle(i)}
               />
-            }
+            ) : (
+              <Text key={i} style={styles.captionText}>{word.text[0]}</Text>
+            )}
             </View>
           ))
         }

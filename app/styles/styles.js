@@ -1,7 +1,8 @@
 import {
   StyleSheet,
   StatusBar,
-  Dimensions
+  Dimensions,
+  Platform
 } from 'react-native';
 
 const width = Dimensions.get('window').width
@@ -48,6 +49,14 @@ export const styles = StyleSheet.create({
     alignSelf: 'stretch',
     height: 212
   },
+  captionText:{
+    fontSize:18,
+    paddingTop:8,
+    paddingBottom:8,
+    marginTop:5,
+    marginBottom:5,
+    color: colors.defaultText
+  },
   bookmarkedButton: {
     backgroundColor: colors.lightGray
   },
@@ -75,11 +84,27 @@ export const styles = StyleSheet.create({
     flexWrap: 'wrap',
     alignItems: 'flex-start',
     flexDirection:'row',
-    marginTop: 20
+    marginTop: 20,
+    paddingLeft:10,
+    paddingRight:10
   },
   wordButton:{
-    marginLeft:10,
-    marginRight:10
+    borderRadius: 5,
+    marginLeft:2,
+    marginRight:2,
+    marginTop: 5,
+    marginBottom: 5,
+    ...Platform.select({
+      android: {
+        elevation: 2,
+      },
+      default: {
+        shadowColor: 'rgba(0,0,0, .2)',
+        shadowOffset: { height: 0.5, width: 0.5  },
+        shadowOpacity: 1,
+        shadowRadius: 1,
+      },
+    }),
   },
   btnFullWidth: {
     width: width - 20,
