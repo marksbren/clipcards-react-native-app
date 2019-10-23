@@ -6,6 +6,9 @@ import {colors} from '../styles/styles';
 import {styles} from '../styles/styles'
 import {hasMultipleScripts, getScripts} from '../helpers/languageHelpers'
 
+import APIManager from '../networking/APIManager';
+let apiManager = APIManager.getInstance();
+
 const skipSeconds = 5
 
 
@@ -129,24 +132,24 @@ export default class CaptionPlayer extends React.Component {
 
   saveWordToggle(i){
     var wordKey = this._generateWordKey(i)
+    var newBookmark = this._generateBookmarkObject(wordKey)
+    var isActive = true
     var newBookmarkedWords = this.state.bookmarkedWords
     var newBookmarkLookup = this.state.bookmarkLookup
     if(this._wordIsSaved(wordKey)){
       for (let [key, item] of newBookmarkedWords.entries()) {
-        if(item.captionDataId === this.state.captionData[this.state.captionIndex]["_id"] && item.wordIndex === i){
+        if(item.captionDataId === this.state.captionData[this.state.captionIndex]["_id"] && item.wordIndex == i){
           newBookmarkedWords.splice(key,1)
           break
         }
       }
       delete newBookmarkLookup[wordKey]
+      isActive = false
     }else{
-      var newBookmark = {
-        captionDataId: this.state.captionData[this.state.captionIndex]["_id"],
-        wordIndex: i
-      }
       newBookmarkedWords.push(newBookmark)
       newBookmarkLookup[this._generateWordKey(i)] = true
     }
+    // apiManager.updateBookmark(newBookmark,isActive,this.state.captionScriptIndex)
     this.setState({
       bookmarkedWords: newBookmarkedWords,
       bookmarkLookup: newBookmarkLookup
@@ -163,6 +166,15 @@ export default class CaptionPlayer extends React.Component {
 
   _generateWordKey(i){
     return this.state.captionData[this.state.captionIndex]["_id"] + "|" + i
+  }
+
+  _generateBookmarkObject(wordKey){
+    var keys = wordKey.split("|")
+    var result = {
+      captionDataId: keys[0],
+      wordIndex: keys[1]
+    }
+    return result
   }
 
   onChangeState(e){

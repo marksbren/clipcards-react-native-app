@@ -140,6 +140,28 @@ export default class APIManager extends Component {
     });
   }
 
+  updateBookmark(bookmarkObject, isActive, tappedIndex){
+    var url = '/bookmarks'
+    var body = {
+      bookmarks: [{
+      	captionData: bookmarkObject.captionDataId,
+      	captionDataIndex: bookmarkObject.wordIndex,
+      	tappedIndex: tappedIndex,
+      	isActive: isActive
+      }]
+    }
+
+    return this.postAPI(url,body)
+    .then((responseJson) => {
+      return {success:true,error:false}
+    })
+    .catch((error) =>{
+      console.error(error);
+      return {success:false,error:true}
+    });
+
+  }
+
   postPhoneSignup(phoneString){
     var url = '/auth/register-number'
     var body = {phone: phoneString}
