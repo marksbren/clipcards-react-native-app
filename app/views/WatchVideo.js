@@ -7,6 +7,8 @@ import {colors} from '../styles/styles';
 import APIManager from '../networking/APIManager';
 import CaptionPlayer from '../components/CaptionPlayer';
 
+import ModelManager from '../models/controller';
+
 const youtubeRegex = /(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'<>\n $#]+)/
 const watchStatesEnum = { preCopy: 0, selectLanguage: 1, showPlayer: 3}
 
@@ -15,8 +17,11 @@ export default class WatchVideo extends React.Component {
     super(props);
     this.state = {
       youtubeId: "",
+      videoData: {},
       captionData: [],
-      languagesAvailable: [],
+      audioLanguage: "",
+      supportedLanguages: [],
+      otherLanguages: [],
       selectedLanguage: 'en',
       state: watchStatesEnum.preCopy,
       error: "",
@@ -67,19 +72,33 @@ export default class WatchVideo extends React.Component {
     );
   }
 
-  getCaption(index){
+  getSupportedCaption(index){
     this.setState({
       isFetching:true,
-      selectedLanguage: this.state.languagesAvailable[index]
+      selectedLanguage: this.state.supportedLanguages[index]
     })
+    this.getCaption(this.state.supportedLanguages[index])
+  }
+
+  getOtherCaption(index){
+    this.setState({
+      isFetching:true,
+      selectedLanguage: this.state.otherLanguages[index]
+    })
+    this.getCaption(this.state.otherLanguages[index])
+  }
+
+  getCaption(lang){
     let apiManager = APIManager.getInstance();
-    apiManager.getVideoCaptions(this.state.youtubeId,this.state.languagesAvailable[index])
+    apiManager.getVideoCaptions(this.state.youtubeId,lang)
     .then((response) => {
       this.setState({isFetching:false})
       if(response.success){
+        var videoData = ModelManager.loadVideo(response.data.video)
         this.setState({
           state: watchStatesEnum.showPlayer,
-          captionData: response.data
+          captionData: response.data.captions,
+          videoData: videoData
         })
       }else{
         this.setState({error:true})
@@ -96,7 +115,9 @@ export default class WatchVideo extends React.Component {
       if(response.success){
         this.setState({
           state: watchStatesEnum.selectLanguage,
-          languagesAvailable: response.data.languages
+          supportedLanguages: response.data.supported,
+          otherLanguages: response.data.other,
+          audioLanguage: response.data.audio
         })
       }else{
         this.setState({error:true})
@@ -105,14 +126,15 @@ export default class WatchVideo extends React.Component {
   }
 
   render() {
-    var hasCaptions = this.state.languagesAvailable.length > 0
-    var languagePageTitle = this.state.languagesAvailable.length > 0 ? 'What language do you want to learn' : "No Languages :("
+    var hasSupportedCaptions = this.state.supportedLanguages.length > 0
+    var hasOtherCaptions = this.state.otherLanguages.length > 0
+    var languagePageTitle = this.state.supportedLanguages.length > 0 ? 'What language do you want to learn' : "No Languages :("
     return (
       <SafeAreaView style={styles.safeArea}>
         { this.state.state === watchStatesEnum.showPlayer &&
           <View style={styles.container}>
             <CaptionPlayer
-              youtubeId={this.state.youtubeId}// The YouTube video ID
+              videoData={this.state.videoData}
               captionData={this.state.captionData} // control playback of video with true/false
               language={this.state.selectedLanguage}
             />
@@ -121,17 +143,32 @@ export default class WatchVideo extends React.Component {
         { this.state.state === watchStatesEnum.selectLanguage &&
           <View style={styles.container}>
           <Text>{languagePageTitle}</Text>
-          {hasCaptions &&
-            this.state.languagesAvailable.map((language, i) => (
+          {hasSupportedCaptions &&
+            this.state.supportedLanguages.map((language, i) => (
               <Button
                 key={i}
                 loading={this.state.isFetching}
                 buttonStyle={[styles.button, styles.btnFullWidth]}
                 title={language}
                 backgroundColor={colors.btnBlue}
-                onPress={(data) => this.getCaption(i)}
+                onPress={(data) => this.getSupportedCaption(i)}
               />
             ))
+          }
+          {hasOtherCaptions &&
+            <Text>Other Languages</Text>
+          }
+          {hasOtherCaptions &&
+              this.state.otherLanguages.map((language, i) => (
+                <Button
+                  key={i}
+                  loading={this.state.isFetching}
+                  buttonStyle={[styles.button, styles.btnFullWidth]}
+                  title={language}
+                  backgroundColor={colors.btnBlue}
+                  onPress={(data) => this.getOtherCaption(i)}
+                />
+              ))
           }
           </View>
 
@@ -139,7 +176,7 @@ export default class WatchVideo extends React.Component {
         { this.state.state === watchStatesEnum.preCopy &&
           <View style={styles.container}>
             <Text>{this.state.clipboardHasYoutube ? "youtube" : "noyoutube"}</Text>
-            <Text>{this.state.youtubeId}</Text>
+            <Text>{this.state.videoData.videoId}</Text>
             <Text>{this.state.clipboardContent}</Text>
           </View>
         }

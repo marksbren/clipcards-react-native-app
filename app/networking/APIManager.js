@@ -145,7 +145,7 @@ export default class APIManager extends Component {
     var body = {
       bookmarks: [{
       	captionData: bookmarkObject.captionDataId,
-      	captionDataIndex: bookmarkObject.wordIndex,
+      	captionDataIndex: bookmarkObject.captionDataIndex,
       	tappedIndex: tappedIndex,
       	isActive: isActive
       }]

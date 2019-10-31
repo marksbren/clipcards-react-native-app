@@ -5,8 +5,10 @@ import { Button, Icon } from 'react-native-elements';
 import {colors} from '../styles/styles';
 import {styles} from '../styles/styles'
 import {hasMultipleScripts, getScripts} from '../helpers/languageHelpers'
-
 import APIManager from '../networking/APIManager';
+
+import ModelManager from '../models/controller';
+
 let apiManager = APIManager.getInstance();
 
 const skipSeconds = 5
@@ -16,21 +18,22 @@ export default class CaptionPlayer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      youtubeId: this.props.youtubeId,
       captionData: this.props.captionData,
+      videoData: this.props.videoData,
       language: this.props.language,
-      bookmarkedWords: [],
-      bookmarkLookup: {},
       captionIndex: 0,
+      activeBookmarkCount: 0,
       captionScripts: [],
       captionScriptIndex: 0,
       isReady: false,
+      playbackCompleted: false,
       status: "",
       quality: "",
       error: "",
       playVideo:false,
       clipboardHasYoutube: false,
       isFetching: false,
+      videoFinished: false
     }
 
     this._youTubeRef = React.createRef()
@@ -56,8 +59,8 @@ export default class CaptionPlayer extends React.Component {
     this._currentPlayTime()
     .then((currentTime) => {
       var newTime = currentTime - skipSeconds
-      this._youTubeRef.current.seekTo(newTime)
-      this.updateIndex(newTime)
+      this.loadVideoToTime(newTime)
+      this.updateIndexAndPlay(newTime)
     })
     .catch((errorMessage) => { this.setState({error: errorMessage}) });
   }
@@ -66,7 +69,7 @@ export default class CaptionPlayer extends React.Component {
     this._currentPlayTime()
     .then((currentTime) => {
       var newTime = currentTime + skipSeconds
-      this._youTubeRef.current.seekTo(newTime)
+      this.loadVideoToTime(newTime)
       this._playVideo()
       this.checkProgress()
     })
@@ -85,23 +88,27 @@ export default class CaptionPlayer extends React.Component {
     })
   }
 
+  updateIndexAndPlay(newTime){
+    this.updateIndex(newTime)
+    this.setState({
+      playVideo: true
+    })
+  }
+
   updateIndex(newTime){
     if(newTime * 1000 < this.state.captionData[0].end){
       this.setState({
-        captionIndex: 0,
-        playVideo: true
+        captionIndex: 0
       })
     }else if(newTime * 1000 > this.state.captionData[this.state.captionData.length-1].end){
       this.setState({
-        captionIndex: this.state.captionData.length-1,
-        playVideo: true
+        captionIndex: this.state.captionData.length-1
       })
     }else{
       for (var i = 0; i < this.state.captionData.length; i++) {
         if(newTime * 1000 < this.state.captionData[i].end){
           this.setState({
-            captionIndex: i,
-            playVideo: true
+            captionIndex: i
           })
           break
         }
@@ -109,16 +116,37 @@ export default class CaptionPlayer extends React.Component {
     }
   }
 
+  loadVideoToTime(time){
+    this._youTubeRef.current.seekTo(time)
+  }
+
   checkProgress(){
     if(!this.state.playVideo){ return }
     this._currentPlayTime()
     .then((currentTime) => {
-      var moveNext = currentTime * 1000 > this.state.captionData[this.state.captionIndex].end
-      if(this.state.captionIndex < this.state.captionData.length - 1 && moveNext){
-        this.updateIndex(currentTime)
-      }
+      this._duration()
+      .then((duration) => {
+        ModelManager.updateVideoPlayStats(this.state.videoData._id, duration, currentTime, this.state.playbackCompleted)
+        var moveNext = currentTime * 1000 > this.state.captionData[this.state.captionIndex].end
+        if(duration - currentTime < 20){
+          console.warn("video Ending")
+          this.setState({videoFinished: true})
+        }
+        if(this.state.captionIndex < this.state.captionData.length - 1 && moveNext){
+          this.updateIndexAndPlay(currentTime)
+        }
+      })
     })
     .catch((errorMessage) => { console.warn(errorMessage) });
+  }
+
+  _duration(){
+    return new Promise((resolve, reject) => {
+      this._youTubeRef.current
+        .getDuration()
+        .then((duration) => { resolve(duration) })
+        .catch((errorMessage) => { reject(errorMessage) });
+      })
   }
 
   _currentPlayTime(){
@@ -130,35 +158,36 @@ export default class CaptionPlayer extends React.Component {
       })
   }
 
+  loadStartPosition(){
+    var startTime = 0
+    if(this.state.videoData.previousPlayTime > 10){
+      startTime = this.state.videoData.previousPlayTime - 10
+    }else if(this.state.videoData.previousPlayTime > 0){
+      startTime = this.state.videoData.previousPlayTime
+    }
+    this.loadVideoToTime(startTime)
+    this.updateIndex(startTime)
+  }
+
   saveWordToggle(i){
     var wordKey = this._generateWordKey(i)
     var newBookmark = this._generateBookmarkObject(wordKey)
     var isActive = true
-    var newBookmarkedWords = this.state.bookmarkedWords
-    var newBookmarkLookup = this.state.bookmarkLookup
     if(this._wordIsSaved(wordKey)){
-      for (let [key, item] of newBookmarkedWords.entries()) {
-        if(item.captionDataId === this.state.captionData[this.state.captionIndex]["_id"] && item.wordIndex == i){
-          newBookmarkedWords.splice(key,1)
-          break
-        }
-      }
-      delete newBookmarkLookup[wordKey]
       isActive = false
-    }else{
-      newBookmarkedWords.push(newBookmark)
-      newBookmarkLookup[this._generateWordKey(i)] = true
     }
+    newBookmark.isActive = isActive
+    newBookmark.tappedIndex = this.state.captionScriptIndex
+    ModelManager.updateBookmark(newBookmark)
     // apiManager.updateBookmark(newBookmark,isActive,this.state.captionScriptIndex)
     this.setState({
-      bookmarkedWords: newBookmarkedWords,
-      bookmarkLookup: newBookmarkLookup
+      activeBookmarkCount: ModelManager.videoBookmarkCount(this.state.videoData._id)
     })
   }
 
   _wordIsSaved(wordKey){
     var wordIsSaved = false
-    if(this.state.bookmarkLookup.hasOwnProperty(wordKey)){
+    if(ModelManager.bookmarkIsSaved(this._generateBookmarkObject(wordKey))){
       wordIsSaved = true
     }
     return wordIsSaved
@@ -172,16 +201,27 @@ export default class CaptionPlayer extends React.Component {
     var keys = wordKey.split("|")
     var result = {
       captionDataId: keys[0],
-      wordIndex: keys[1]
+      captionDataIndex: Number(keys[1]),
+      videoId: this.state.videoData._id
     }
     return result
   }
 
+  onPlayerReady(e){
+    this.loadStartPosition()
+    this.setState({ isReady: true })
+  }
+
   onChangeState(e){
-    if( !this.state.playVideo && e.state === "playing"){
+    if(!this.state.playVideo && e.state === "playing"){
       this.playPause()
     }else if( this.state.playVideo && e.state === "paused" ){
       this.playPause()
+    }else if( e.state === "ended"){
+      this.setState({
+        videoFinished: true,
+        playVideo: false
+      })
     }
   }
 
@@ -204,12 +244,11 @@ export default class CaptionPlayer extends React.Component {
 
   render() {
     var hasMultipleScripts = this.state.captionScripts.length > 0
-    var hasBookmarkedWords = this.state.bookmarkedWords.length > 0
     return (
       <View style={styles.container}>
         <YouTube
           ref={this._youTubeRef}
-          videoId={this.state.youtubeId}// The YouTube video ID
+          videoId={this.state.videoData.videoId}// The YouTube video ID
           play={this.state.playVideo} // control playback of video with true/false
           controls={0}
           showFullscreenButton={false}
@@ -217,7 +256,7 @@ export default class CaptionPlayer extends React.Component {
           showinfo={false}
           origin="http://www.youtube.com"
           rel={false}
-          onReady={e => this.setState({ isReady: true })}
+          onReady={e => this.onPlayerReady(e)}
           onChangeState={e => this.onChangeState(e)}
           onChangeQuality={e => this.setState({ quality: e.quality })}
           onError={e => this.setState({ error: e.error })}
@@ -284,8 +323,8 @@ export default class CaptionPlayer extends React.Component {
           </View>
 
         }
-        {hasBookmarkedWords &&
-          <Text>{this.state.bookmarkedWords.length}</Text>
+        {this.state.activeBookmarkCount > 0 &&
+          <Text>{this.state.activeBookmarkCount}</Text>
         }
 
       </View>
