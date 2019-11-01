@@ -1,9 +1,17 @@
-import Video from '../videos/video.model';
-import Bookmark from '../bookmarks/bookmark.model';
+import Video from '../videos/video.model'
+import CaptionPart from '../captions/captionpart.model'
 
 export default class CaptionData {
-  get bookmarkKey() {
-    return this.captionDataId + '|' + this.captionDataIndex;
+  textString(index) {
+    var string = ""
+    this.parts.map((part, i) => {
+      if(part.type == "word"){
+        string += part[index]
+      }else{
+        string += part[0]
+      }
+    })
+    return string
   }
 }
 
@@ -14,8 +22,9 @@ CaptionData.schema = {
     line: 'string',
     start: 'int',
     end: 'int',
-    parts: 'string[]',
     video: 'Video',
-    bookmarks: {type: 'linkingObjects', objectType: 'Bookmark', property: 'captionData'}
+    parts: {type: 'linkingObjects', objectType: 'CaptionPart', property: 'captionData'},
+    bookmarks: {type: 'linkingObjects', objectType: 'Bookmark', property: 'captionData'},
+
   }
 }

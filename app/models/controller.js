@@ -2,12 +2,13 @@ import Bookmark from './bookmarks/bookmark.model';
 import Video from './videos/video.model';
 import Language from './languages/language.model';
 import CaptionData from './captions/captiondata.model';
+import CaptionPart from './captions/captionpart.model';
 
 const Realm = require('realm')
 
 const realm = new Realm({
   path: '/Users/marksbren/Downloads/dev.realm',
-  schema: [Bookmark,Video,Language,CaptionData],
+  schema: [Bookmark,Video,Language,CaptionData,CaptionPart],
   deleteRealmIfMigrationNeeded: true})
 
 export default class ModelManager {
@@ -134,7 +135,7 @@ export default class ModelManager {
       line: captionData.part,
       start: captionData.start,
       end: captionData.end,
-      parts: ["these"," ","are"," ","parts"],
+      parts: captionData.words,
       video: video
     }
     return captionObject
@@ -181,14 +182,28 @@ export default class ModelManager {
   }
 
   static insertBookmark(bookmark,captionData){
-    var captionData = this.getCaptionForBookmark(captionData)
-    let newBookmark = realm.write(() => {
-      realm.create('Bookmark', {
+    var writeParts = false
+    if(!this.captionDataExists(captionData._id)){
+      writeParts = true
+    }
+    var newCaptionData = this.getCaptionForBookmark(captionData)
+    realm.write(() => {
+      let newBookmark = realm.create('Bookmark', {
         tappedIndex: bookmark.tappedIndex,
         captionDataIndex: bookmark.captionDataIndex,
-        captionData: captionData,
+        captionData: newCaptionData,
         isActive: true
       });
+      if(writeParts){
+        var partCaption = newBookmark.captionData
+        captionData.words.map((word, i) => (
+          realm.create('CaptionPart', {
+            type: word.type,
+            text: word.text,
+            captionData: partCaption
+          })
+        ))
+      }
     });
     return true
   }
