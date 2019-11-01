@@ -172,13 +172,9 @@ export default class CaptionPlayer extends React.Component {
   saveWordToggle(i){
     var wordKey = this._generateWordKey(i)
     var newBookmark = this._generateBookmarkObject(wordKey)
-    var isActive = true
-    if(this._wordIsSaved(wordKey)){
-      isActive = false
-    }
-    newBookmark.isActive = isActive
-    newBookmark.tappedIndex = this.state.captionScriptIndex
-    ModelManager.updateBookmark(newBookmark)
+    var captionData = this.state.captionData[this.state.captionIndex]
+    captionData.videoId = this.state.videoData._id
+    ModelManager.updateBookmark(newBookmark,captionData)
     // apiManager.updateBookmark(newBookmark,isActive,this.state.captionScriptIndex)
     this.setState({
       activeBookmarkCount: ModelManager.videoBookmarkCount(this.state.videoData._id)
@@ -202,7 +198,7 @@ export default class CaptionPlayer extends React.Component {
     var result = {
       captionDataId: keys[0],
       captionDataIndex: Number(keys[1]),
-      videoId: this.state.videoData._id
+      tappedIndex: this.state.captionScriptIndex
     }
     return result
   }

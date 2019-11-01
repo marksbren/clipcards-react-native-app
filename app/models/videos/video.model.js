@@ -1,4 +1,4 @@
-import Bookmark from '../bookmarks/bookmark.model';
+import CaptionData from '../captions/captiondata.model';
 import Language from '../languages/language.model';
 
 export default class Video {
@@ -28,6 +28,6 @@ Video.schema = {
     duration: "double",
     previousPlayTime: "double",
     language: "Language",
-    bookmarks: {type: 'linkingObjects', objectType: 'Bookmark', property: 'video'}
+    captionDatas: {type: 'linkingObjects', objectType: 'CaptionData', property: 'video'}
   }
 }

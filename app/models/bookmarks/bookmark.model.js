@@ -1,4 +1,4 @@
-import Video from '../videos/video.model';
+import CaptionData from '../captions/captiondata.model';
 
 export default class Bookmark {
   get bookmarkKey() {
@@ -11,8 +11,7 @@ Bookmark.schema = {
   properties: {
     tappedIndex: {type: 'int', default: 0},
     captionDataIndex: {type: 'int', default: 0},
-    captionDataId: {type: 'string', indexed: true},
-    video: 'Video',
+    captionData: 'CaptionData',
     isActive: 'bool',
     isSynced: {type: 'bool', default: false},
   }
