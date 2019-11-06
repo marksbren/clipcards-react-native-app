@@ -13,6 +13,10 @@ const realm = new Realm({
 
 export default class ModelManager {
   ///Language Functions
+  static languageList(){
+    let languages = realm.objects('Language')
+    return languages
+  }
 
   static getLanguage(code){
     let realmLanguage = realm.objects('Language').filtered('code = $0', code)
@@ -34,6 +38,11 @@ export default class ModelManager {
 
 
   /// Video functions
+  static videoListForLanguage(code){
+    let realmLanguage = realm.objects('Language').filtered('code = $0', code)[0]
+    return realmLanguage.videos
+  }
+
   static videoBookmarkCount(videoId){
     let realmVideos = realm.objects('Video').filtered('_id = $0', videoId)
     var count = 0
@@ -166,19 +175,20 @@ export default class ModelManager {
 
   //// Bookmark functions
   static updateBookmark(bookmark,captionData){
-      if(!this.captionDataExists(captionData._id)){
-        this.insertBookmark(bookmark,captionData)
-      }
-      var existincCaptionData = this.getCaptionForBookmark(captionData)
-      var realmBookmarks = existincCaptionData.bookmarks.filtered('captionDataIndex = $0', bookmark.captionDataIndex)
-      if(realmBookmarks.length == 0 ){
-        this.insertBookmark(bookmark,captionData)
-      }else{
-        var newActive = !realmBookmarks[0].isActive
-        realm.write(() => {
-          realmBookmarks[0].isActive = newActive;
-        });
-      }
+    if(!this.captionDataExists(captionData._id)){
+      this.insertBookmark(bookmark,captionData)
+      return
+    }
+    var existincCaptionData = this.getCaptionForBookmark(captionData)
+    var realmBookmarks = existincCaptionData.bookmarks.filtered('captionDataIndex = $0', bookmark.captionDataIndex)
+    if(realmBookmarks.length == 0 ){
+      this.insertBookmark(bookmark,captionData)
+    }else{
+      var newActive = !realmBookmarks[0].isActive
+      realm.write(() => {
+        realmBookmarks[0].isActive = newActive;
+      });
+    }
   }
 
   static insertBookmark(bookmark,captionData){

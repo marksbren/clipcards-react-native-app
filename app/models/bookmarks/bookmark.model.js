@@ -12,7 +12,7 @@ Bookmark.schema = {
     tappedIndex: {type: 'int', default: 0},
     captionDataIndex: {type: 'int', default: 0},
     captionData: 'CaptionData',
-    isActive: 'bool',
+    isActive: {type: 'bool', default: true},
     isSynced: {type: 'bool', default: false},
   }
 }

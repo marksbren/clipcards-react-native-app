@@ -6,6 +6,7 @@ import {styles} from '../styles/styles';
 import {colors} from '../styles/styles';
 import APIManager from '../networking/APIManager';
 import CaptionPlayer from '../components/CaptionPlayer';
+import HomeHeader from '../components/HomeHeader';
 
 import ModelManager from '../models/controller';
 
@@ -22,7 +23,7 @@ export default class WatchVideo extends React.Component {
       audioLanguage: "",
       supportedLanguages: [],
       otherLanguages: [],
-      selectedLanguage: 'en',
+      selectedLanguage: '',
       state: watchStatesEnum.preCopy,
       error: "",
       clipboardHasYoutube: false,
@@ -33,9 +34,23 @@ export default class WatchVideo extends React.Component {
 
   componentDidMount() {
     let apiManager = APIManager.getInstance();
-    this.readFromClipboard()
-    if(youtubeRegex.test(this.state.clipboardContent)){
-      this.setState({ clipboardHasYoutube: true })
+    // this.readFromClipboard()
+    // if(youtubeRegex.test(this.state.clipboardContent)){
+    //   this.setState({ clipboardHasYoutube: true })
+    // }
+
+    //if loading from homepage
+    if(this.props.navigation.state.params.language && this.props.navigation.state.params.videoId){
+      this.setState({
+        selectedLanguage: this.props.navigation.state.params.language,
+        youtubeId: this.props.navigation.state.params.videoId
+      })
+      this.getCaption(this.props.navigation.state.params.language, this.props.navigation.state.params.videoId)
+    }else if(this.props.navigation.state.params.videoId){
+      this.setState({
+        youtubeId: this.props.navigation.state.params.videoId,
+      })
+      this.getCaptionLanguages(this.props.navigation.state.params.videoId)
     }
   }
 
@@ -88,9 +103,9 @@ export default class WatchVideo extends React.Component {
     this.getCaption(this.state.otherLanguages[index])
   }
 
-  getCaption(lang){
+  getCaption(lang,vidId = this.state.youtubeId){
     let apiManager = APIManager.getInstance();
-    apiManager.getVideoCaptions(this.state.youtubeId,lang)
+    apiManager.getVideoCaptions(vidId,lang)
     .then((response) => {
       this.setState({isFetching:false})
       if(response.success){
@@ -106,10 +121,10 @@ export default class WatchVideo extends React.Component {
     })
   }
 
-  getCaptionLanguages(){
+  getCaptionLanguages(vidId = this.state.youtubeId){
     this.setState({isFetching:true})
     let apiManager = APIManager.getInstance();
-    apiManager.getVideoCaptionLanguages(this.state.youtubeId)
+    apiManager.getVideoCaptionLanguages(vidId)
     .then((response) => {
       this.setState({isFetching:false})
       if(response.success){
@@ -125,12 +140,29 @@ export default class WatchVideo extends React.Component {
     })
   }
 
+  goBack(){
+
+    console.warn(this.state.selectedLanguage)
+    if(this.state.selectedLanguage.length > 0){
+      this.props.navigation.state.params.onGoBack(this.state.selectedLanguage)
+      this.props.navigation.goBack()
+    }else{
+      this.props.navigation.goBack()
+    }
+
+  }
+
   render() {
     var hasSupportedCaptions = this.state.supportedLanguages.length > 0
     var hasOtherCaptions = this.state.otherLanguages.length > 0
     var languagePageTitle = this.state.supportedLanguages.length > 0 ? 'What language do you want to learn' : "No Languages :("
     return (
-      <SafeAreaView style={styles.safeArea}>
+      <View style={styles.safeArea}>
+        <HomeHeader
+          titleList={[]}
+          currentTitleIndex={0}
+          onLeftClick={() => this.goBack()}
+        />
         { this.state.state === watchStatesEnum.showPlayer &&
           <View style={styles.container}>
             <CaptionPlayer
@@ -180,7 +212,7 @@ export default class WatchVideo extends React.Component {
             <Text>{this.state.clipboardContent}</Text>
           </View>
         }
-      </SafeAreaView>
+      </View>
     );
   }
 }
