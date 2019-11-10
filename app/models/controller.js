@@ -60,6 +60,7 @@ export default class ModelManager {
         realmVideo.duration = duration;
         realmVideo.previousPlayTime = previousPlayTime;
         realmVideo.finishedWatching = finishedWatching;
+        realmVideo.lastViewedAt = new Date();
       });
     }else{
       console.warn("video not saved is trying to update")
@@ -92,13 +93,14 @@ export default class ModelManager {
   }
 
   static insertVideo(video){
-    var realmLanguage = this.getLanguage(video.language)
+    var realmLanguage = this.getLanguage(video.languageGroup)
     let newVideo = realm.write(() => {
       realm.create('Video', {
         _id: video._id,
         videoId: video.videoId,
         trackKind: video.trackKind,
         language: realmLanguage,
+        captionLanguage: video.language,
         name: video.name,
         audioTrackType: video.audioTrackType,
         isCC: video.isCC,

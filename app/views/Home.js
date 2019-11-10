@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Clipboard, View, Text, SafeAreaView } from 'react-native';
+import { Alert, Clipboard, View, Text, SafeAreaView, ScrollView } from 'react-native';
 import YouTube from 'react-native-youtube';
 import { Button, Icon, ListItem, Header } from 'react-native-elements';
 import {styles} from '../styles/styles';
@@ -29,21 +29,13 @@ export default class HomeView extends React.Component {
   }
 
   componentDidMount() {
-    var clipboardHasYoutube = false
     let apiManager = APIManager.getInstance();
     var languageList = ModelManager.languageList()
-    var videoList = languageList[this.state.currentLanguageIndex].videos
-
-    // if(this.props.navigation.state.params && this.props.navigation.state.params.language){
-    //   this.setupLanguage(this.props.navigation.state.params.language)
-    // }
+    var videoList = languageList.length > 0 ? languageList[this.state.currentLanguageIndex].videos : []
 
     this.readFromClipboard()
-    if(youtubeRegex.test(this.state.clipboardContent)){
-      clipboardHasYoutube = true
-    }
+
     this.setState({
-      clipboardHasYoutube: clipboardHasYoutube,
       languageList: languageList,
       videoList: videoList
     })
@@ -115,9 +107,10 @@ export default class HomeView extends React.Component {
   }
 
   openVideo(i){
-    var videoId = this.state.videoList[i].videoId
-    var lang = this.state.languageList[this.state.currentLanguageIndex].code
-    this.props.navigation.navigate("video",{language: lang, videoId: videoId})
+    var video = this.state.videoList[i]
+    this.props.navigation.navigate("video",{
+      language: video.captionLanguage,
+      videoId: video.videoId})
   }
 
   render() {
@@ -141,19 +134,19 @@ export default class HomeView extends React.Component {
             currentTitleIndex={this.state.currentLanguageIndex}
             onTitleChange={(i) => this.changeLanguage(i)}
           />
-          <View>
-          {this.state.videoList.map((video, i) => (
-              <VideoCard
-                key={video.videoId + i}
-                listItem={i}
-                title={video.videoTitle}
-                videoId={video.videoId}
-                thumbnailUrl={video.videoThumbnail}
-                onTap={(i) => this.openVideo(i)}
-              />
-            ))
-          }
-          </View>
+          <ScrollView>
+              {this.state.videoList.map((video, i) => (
+                  <VideoCard
+                    key={video.videoId + i}
+                    listItem={i}
+                    title={video.videoTitle}
+                    videoId={video.videoId}
+                    thumbnailUrl={video.videoThumbnail}
+                    onTap={(i) => this.openVideo(i)}
+                  />
+                ))
+              }
+          </ScrollView>
         </View>
       </ActionSheetProvider>
     );

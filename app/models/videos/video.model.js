@@ -11,6 +11,9 @@ Video.schema = {
   name: 'Video',
   properties: {
     _id: "string",
+    createdAt: {type: 'date', default: new Date()},
+    lastViewedAt: {type: 'date', default: new Date(), indexed: true },
+    qualityScore: {type: 'int', default: -1, indexed: true },
     videoId: "string",
     trackKind: "string",
     name: "string",
@@ -28,6 +31,7 @@ Video.schema = {
     duration: "double",
     previousPlayTime: "double",
     language: "Language",
+    captionLanguage: "string",
     captionDatas: {type: 'linkingObjects', objectType: 'CaptionData', property: 'video'}
   }
 }

@@ -1,5 +1,5 @@
 const supportedScripts = {
-  zh: ['简','繁','pinyin']
+  zh: ['简体字','繁体字','pinyin']
 }
 
 function hasMultipleScripts(language){
@@ -9,6 +9,10 @@ function hasMultipleScripts(language){
   }else{
     return false
   }
+}
+
+function cleanedSpokenLanguage(languageCode){
+  var languageFamily = language.split("-")[0]
 }
 
 function getScripts(language){
