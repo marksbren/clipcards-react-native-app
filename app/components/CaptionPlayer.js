@@ -1,10 +1,10 @@
 import React from 'react';
 import { Alert, Clipboard, View, Text } from 'react-native';
 import YouTube from 'react-native-youtube';
-import { Button, Icon } from 'react-native-elements';
+import { Button, Icon, ButtonGroup } from 'react-native-elements';
 import {colors} from '../styles/styles';
 import {styles} from '../styles/styles'
-import {hasMultipleScripts, getScripts} from '../helpers/languageHelpers'
+import LanguageHelpers from '../helpers/languageHelpers'
 import APIManager from '../networking/APIManager';
 
 import ModelManager from '../models/controller';
@@ -41,8 +41,8 @@ export default class CaptionPlayer extends React.Component {
 
   componentDidMount() {
     var setupCaptionScripts = []
-    if(hasMultipleScripts(this.state.language)){
-      setupCaptionScripts = getScripts(this.state.language)
+    if(LanguageHelpers.hasMultipleScripts(this.state.language)){
+      setupCaptionScripts = LanguageHelpers.getScripts(this.state.language)
     }
     this.setState({
       checkVideoTimer: setInterval(() => {this.checkProgress()}, 500),
@@ -228,18 +228,15 @@ export default class CaptionPlayer extends React.Component {
     })
   }
 
-  switchScript(){
-    var nextIndex = this.state.captionScriptIndex + 1
-    if(this.state.captionScripts.length === this.state.captionScriptIndex + 1){
-      nextIndex = 0
-    }
+  changeScript(i){
     this.setState({
-      captionScriptIndex: nextIndex
+      captionScriptIndex: i
     })
   }
 
   render() {
     var hasMultipleScripts = this.state.captionScripts.length > 0
+    var scriptButtons = LanguageHelpers.getScripts(this.state.language)
     return (
       <View style={styles.container}>
         <YouTube
@@ -287,6 +284,17 @@ export default class CaptionPlayer extends React.Component {
             onPress={() => this.jumpForward()}
           />
         </View>
+        {hasMultipleScripts &&
+            <ButtonGroup
+              onPress={(i) => this.changeScript(i)}
+              selectedIndex={this.state.captionScriptIndex}
+              buttons={scriptButtons}
+              containerStyle={styles.scriptSelectorUnselected}
+              selectedButtonStyle={styles.scriptSelectorSelected}
+              selectedTextStyle={styles.scriptSelectorSelectedText}
+            />
+
+        }
         <View style={styles.wordButtonContainer}>
         {
           this.state.captionData[this.state.captionIndex].words.map((word, i) => (
@@ -307,18 +315,6 @@ export default class CaptionPlayer extends React.Component {
           ))
         }
         </View>
-        {hasMultipleScripts &&
-          <View style={styles.scriptButtonContainer}>
-            <Button
-              title={this.state.captionScripts[this.state.captionScriptIndex]}
-              raised
-              type="outline"
-              containerStyle={[styles.wordButton]}
-              onPress={(data) => this.switchScript()}
-            />
-          </View>
-
-        }
         {this.state.activeBookmarkCount > 0 &&
           <Text>{this.state.activeBookmarkCount}</Text>
         }

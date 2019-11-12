@@ -24,8 +24,12 @@ export default class CaptionData {
     return isBookmarked
   }
 
-  bookmarkData(scriptIndex){
-    var textData = []
+  bookmarkData(scriptIndex,insertSpace = false){
+    var bookmarkData = {}
+    bookmarkData.textData = []
+    bookmarkData.originalText = this.line
+    bookmarkData._id = this._id
+
     this.parts.map((part, i) => {
       var partData = {}
       if(part.type == "word"){
@@ -33,17 +37,20 @@ export default class CaptionData {
       }else{
         partData.text = part.text[0]
       }
+      if(insertSpace){
+        partData.text += " "
+      }
       partData.isBookmarked = false
-      textData.push(partData)
+      bookmarkData.textData.push(partData)
     })
 
     this.bookmarks.map((bookmark, i) => {
       if(bookmark.isActive){
-        textData[bookmark.captionDataIndex].isBookmarked = true
+        bookmarkData.textData[bookmark.captionDataIndex].isBookmarked = true
       }
     })
 
-    return textData
+    return bookmarkData
 
   }
 }

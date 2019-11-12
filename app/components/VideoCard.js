@@ -2,14 +2,14 @@ import React from 'react';
 import { Alert, Clipboard, View, Text, Image, TouchableOpacity } from 'react-native';
 import {styles} from '../styles/styles';
 import {colors} from '../styles/styles';
+import TimeHelper from '../helpers/timeHelpers';
 
 
 export default class VideoCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: this.props.title,
-      thumbnailUrl: this.props.thumbnailUrl
+      video: this.props.video,
     }
   }
 
@@ -22,6 +22,7 @@ export default class VideoCard extends React.Component {
   }
 
   render() {
+    var lastViewedString = "Last viewed: " + TimeHelper.timeAgoString(this.state.video.lastViewedAt)
     return (
       <View>
         <TouchableOpacity
@@ -29,9 +30,11 @@ export default class VideoCard extends React.Component {
         >
           <Image
             style={styles.videoCard}
-            source={{uri: this.state.thumbnailUrl}}
+            source={{uri: this.state.video.videoThumbnail}}
           />
-          <Text>{this.state.title}</Text>
+          <Text>{this.state.video.videoTitle}</Text>
+          <Text>{lastViewedString}</Text>
+
         </TouchableOpacity>
       </View>
     )

@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, Text } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import LanguageHelpers from '../helpers/languageHelpers';
 import {styles} from '../styles/styles';
 
 
@@ -7,7 +8,7 @@ export default class CaptionListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      caption: this.props.caption
+      captionData: this.props.captionData
     }
   }
 
@@ -16,7 +17,7 @@ export default class CaptionListItem extends React.Component {
 
   createString(){
     var string = []
-    this.state.caption.map((word, i) => {
+    this.state.captionData.textData.map((word, i) => {
       if(word.isBookmarked){
         string.push(<Text key={i} style={[styles.bkmkListText,styles.bkmkActive]}>{word.text}</Text>)
       }else{
@@ -26,12 +27,23 @@ export default class CaptionListItem extends React.Component {
     return string
   }
 
+  onTapPress(){
+    LanguageHelpers.getTranslation(this.state.captionData.originalText)
+    .then((translated) => {
+      console.warn(translated)
+    })
+    .catch((errorMessage) => { console.log(errorMessage) });
+  }
+
 
   render(){
     return (
-      <View style={styles.bkmkListItemContainer}>
+      <TouchableOpacity
+        style={styles.bkmkListItemContainer}
+        onPress={() => this.onTapPress()}
+      >
         {this.createString()}
-      </View>
+      </TouchableOpacity>
     )
   }
 

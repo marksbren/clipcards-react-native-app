@@ -125,5 +125,14 @@ export const styles = StyleSheet.create({
   bkmkActive:{
     color: colors.btnRed,
     fontWeight: 'bold'
+  },
+  scriptSelectorUnselected:{
+    backgroundColor: colors.lightGray
+  },
+  scriptSelectorSelected:{
+    backgroundColor: colors.white
+  },
+  scriptSelectorSelectedText:{
+    color: colors.defaultText
   }
 })

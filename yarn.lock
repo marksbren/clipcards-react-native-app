@@ -5635,6 +5635,11 @@ react-native-phone-input@0.2.2:
     lodash "^4.17.4"
     prop-types "^15.5.10"
 
+react-native-power-translator@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-native-power-translator/-/react-native-power-translator-1.1.1.tgz#f4bf9a5a13a21618e3bf7f6c587f021677baff6c"
+  integrity sha512-btDroFDjSKO6KXb4kotRjnySS+3vAC7ZgQXbLyyj/O1JA2NB8j415jZWJjIGMFgh2fodVUf8N8W31ScAEbwbcA==
+
 react-native-ratings@^6.3.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/react-native-ratings/-/react-native-ratings-6.5.0.tgz#a1606ccba3c5b54eec8e6cfa4765a45cf0e4ab8d"

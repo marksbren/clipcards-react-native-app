@@ -3,6 +3,7 @@ import Video from './videos/video.model';
 import Language from './languages/language.model';
 import CaptionData from './captions/captiondata.model';
 import CaptionPart from './captions/captionpart.model';
+import LanguageHelpers from '../helpers/languageHelpers';
 
 const Realm = require('realm')
 
@@ -176,14 +177,14 @@ export default class ModelManager {
 
 
   //// Bookmark functions
-  static bookmarksForLanguage(lang){
+  static bookmarksForLanguage(lang,scriptIndex){
     var response = []
     var realmLanguage = this.getLanguage(lang)
     realmLanguage.videos.map((video, i) => (
       video.captionDatas.map((caption, j) => {
         // console.warn(caption.line)
         if(caption.isBookmarked()){
-          response.push(caption.bookmarkData(0))
+          response.push(caption.bookmarkData(scriptIndex,LanguageHelpers.languageScriptNeedsSpaces(lang,scriptIndex)))
         }
       })
     ))

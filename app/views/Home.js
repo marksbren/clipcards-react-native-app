@@ -139,6 +139,7 @@ export default class HomeView extends React.Component {
                   <VideoCard
                     key={video.videoId + i}
                     listItem={i}
+                    video={video}
                     title={video.videoTitle}
                     videoId={video.videoId}
                     thumbnailUrl={video.videoThumbnail}

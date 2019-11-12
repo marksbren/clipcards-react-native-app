@@ -1,23 +1,57 @@
+import { PowerTranslator, ProviderTypes, TranslatorConfiguration, TranslatorFactory } from 'react-native-power-translator';
+import * as RNLocalize from "react-native-localize";
+
 const supportedScripts = {
-  zh: ['简体字','繁体字','pinyin']
+  zh: ['简体字','繁体字','Pīnyīn']
 }
 
-function hasMultipleScripts(language){
-  var languageFamily = language.split("-")[0]
-  if(supportedScripts.hasOwnProperty(languageFamily)){
-    return true
-  }else{
-    return false
+const scriptsRequiringSpaces = ['Pīnyīn']
+
+export default class LanguageHelpers {
+  static hasMultipleScripts(language){
+    var languageFamily = language.split("-")[0]
+    if(supportedScripts.hasOwnProperty(languageFamily)){
+      return true
+    }else{
+      return false
+    }
   }
-}
 
-function cleanedSpokenLanguage(languageCode){
-  var languageFamily = language.split("-")[0]
-}
+  static getTranslation(string){
+    var languageCode = this.deviceLanguage()
+    TranslatorConfiguration.setConfig(ProviderTypes.Google, process.env.REACT_NATIVE_GOOGLE_API ,languageCode)
 
-function getScripts(language){
-  var languageFamily = language.split("-")[0]
-  return supportedScripts[languageFamily]
-}
+    const translator = TranslatorFactory.createTranslator();
+    return new Promise((resolve, reject) => {
+      translator.translate(string)
+        .then(translated => {
+          //Do something with the translated text
+          console.warn(translated)
+          resolve(translated)
+        })
+        .catch((errorMessage) => { reject(errorMessage) })
+      })
+  }
 
-module.exports = { hasMultipleScripts, getScripts };
+  static deviceLanguage(){
+    var languageObject = RNLocalize.getLocales()
+    var languageCode = languageObject[0].languageCode
+    return languageCode
+  }
+
+  static languageScriptNeedsSpaces(language,scriptIndex){
+    var script = this.getScripts(language)[scriptIndex]
+    return (scriptsRequiringSpaces.indexOf(script) !== -1)
+  }
+
+
+  static cleanedSpokenLanguage(languageCode){
+    var languageFamily = language.split("-")[0]
+  }
+
+  static getScripts(language){
+    var languageFamily = language.split("-")[0]
+    return supportedScripts[languageFamily]
+  }
+
+}
