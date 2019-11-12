@@ -114,5 +114,16 @@ export const styles = StyleSheet.create({
   videoCard:{
     width: width,
     height: 212
+  },
+  bkmkListItemContainer:{
+    flexDirection:'row',
+    flexWrap: 'wrap'
+  },
+  bkmkListText:{
+    fontSize: 18
+  },
+  bkmkActive:{
+    color: colors.btnRed,
+    fontWeight: 'bold'
   }
 })

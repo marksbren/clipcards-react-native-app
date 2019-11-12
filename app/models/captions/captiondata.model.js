@@ -6,12 +6,45 @@ export default class CaptionData {
     var string = ""
     this.parts.map((part, i) => {
       if(part.type == "word"){
-        string += part[index]
+        string += part.text[index]
       }else{
-        string += part[0]
+        string += part.text[0]
       }
     })
     return string
+  }
+
+  isBookmarked(){
+    var isBookmarked = false
+    this.bookmarks.map((bookmark, i) => {
+      if(bookmark.isActive){
+        isBookmarked = true
+      }
+    })
+    return isBookmarked
+  }
+
+  bookmarkData(scriptIndex){
+    var textData = []
+    this.parts.map((part, i) => {
+      var partData = {}
+      if(part.type == "word"){
+        partData.text = part.text[scriptIndex]
+      }else{
+        partData.text = part.text[0]
+      }
+      partData.isBookmarked = false
+      textData.push(partData)
+    })
+
+    this.bookmarks.map((bookmark, i) => {
+      if(bookmark.isActive){
+        textData[bookmark.captionDataIndex].isBookmarked = true
+      }
+    })
+
+    return textData
+
   }
 }
 

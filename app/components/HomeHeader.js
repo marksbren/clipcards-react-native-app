@@ -13,7 +13,6 @@ class HomeHeader extends React.Component {
   }
 
   componentDidMount() {
-
   }
 
   createTitleButton(){
@@ -57,16 +56,15 @@ class HomeHeader extends React.Component {
 
   render() {
     var title = this.state.titleList[this.state.currentTitleIndex]
+    var titleItem = <Button
+      title={title}
+    />
     if (this.state.titleList.length > 1) {
       titleItem = <Button
         icon=<Ionicons name="md-arrow-dropdown" size={25} color="#ffffff"/>
         iconRight
         title={title}
         onPress={() => this._onOpenActionSheet()}
-      />
-    } else {
-      titleItem = <Button
-        title={title}
       />
     }
     return (

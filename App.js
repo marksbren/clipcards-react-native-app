@@ -1,6 +1,7 @@
 // In App.js in a new project
 import React from 'react';
 import WatchVideo from './app/views/WatchVideo';
+import BookmarkList from './app/views/BookmarkList';
 import HomeView from './app/views/Home';
 import PhoneSignup from './app/views/PhoneSignup';
 import { createAppContainer } from 'react-navigation';
@@ -13,9 +14,8 @@ const AppNavigator = createStackNavigator({
    A: {
      screen: createBottomTabNavigator({
        Home: HomeView,
-       Watch: WatchVideo,
+       List: BookmarkList,
        Signup: PhoneSignup,
-       Settings: WatchVideo,
      },{
        defaultNavigationOptions: ({ navigation }) => ({
          tabBarIcon: ({ focused, horizontal, tintColor }) => {

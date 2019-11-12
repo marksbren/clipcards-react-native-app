@@ -176,6 +176,20 @@ export default class ModelManager {
 
 
   //// Bookmark functions
+  static bookmarksForLanguage(lang){
+    var response = []
+    var realmLanguage = this.getLanguage(lang)
+    realmLanguage.videos.map((video, i) => (
+      video.captionDatas.map((caption, j) => {
+        // console.warn(caption.line)
+        if(caption.isBookmarked()){
+          response.push(caption.bookmarkData(0))
+        }
+      })
+    ))
+    return response
+  }
+
   static updateBookmark(bookmark,captionData){
     if(!this.captionDataExists(captionData._id)){
       this.insertBookmark(bookmark,captionData)
