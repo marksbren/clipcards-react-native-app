@@ -1,5 +1,6 @@
 import { PowerTranslator, ProviderTypes, TranslatorConfiguration, TranslatorFactory } from 'react-native-power-translator';
 import * as RNLocalize from "react-native-localize";
+import { GOOGLE_API_KEY } from 'react-native-dotenv'
 
 const supportedScripts = {
   zh: ['简体字','繁体字','Pīnyīn']
@@ -19,14 +20,14 @@ export default class LanguageHelpers {
 
   static getTranslation(string){
     var languageCode = this.deviceLanguage()
-    TranslatorConfiguration.setConfig(ProviderTypes.Google, process.env.REACT_NATIVE_GOOGLE_API ,languageCode)
+    TranslatorConfiguration.setConfig(ProviderTypes.Google, GOOGLE_API_KEY ,languageCode)
 
     const translator = TranslatorFactory.createTranslator();
     return new Promise((resolve, reject) => {
       translator.translate(string)
         .then(translated => {
           //Do something with the translated text
-          console.warn(translated)
+          // console.warn(translated)
           resolve(translated)
         })
         .catch((errorMessage) => { reject(errorMessage) })

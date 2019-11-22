@@ -40,11 +40,14 @@ export default class BookmarkListView extends React.Component {
   createList(){
     let list = [];
     let lang = this.state.languageList[this.state.currentLanguageIndex].code
-    this.state.bookmarkList.map((captionData, i) => {
+    let needSpaces = LanguageHelpers.languageScriptNeedsSpaces(lang,this.state.currentScriptIndex)
+    this.state.bookmarkList.map((caption, i) => {
         list.push(
           <CaptionListItem
             key={lang + " " + this.state.currentScriptIndex + " " + i}
-            captionData={captionData}
+            caption={caption}
+            language={lang}
+            needSpaces={needSpaces}
             script={this.state.currentScriptIndex}
           />
         )

@@ -2,8 +2,24 @@ import CaptionData from '../captions/captiondata.model';
 import Language from '../languages/language.model';
 
 export default class Video {
-  get bookmarkKey() {
-    return this.captionDataId + '|' + this.captionDataIndex;
+  shortTitle(){
+    var string = this.videoTitle.substring(0,10) + "..."
+    return string
+  }
+
+  bookmarkCount(){
+    var bookmarkCount = 0
+    this.captionDatas.map((captionData, i) => {
+      if(captionData.isBookmarked()){
+        bookmarkCount += 1
+      }
+    })
+    return bookmarkCount
+  }
+
+  viewPercentage(){
+    var percent = 100 * this.previousPlayTime / this.duration
+    return Math.floor(percent)
   }
 }
 

@@ -8,7 +8,8 @@ export default class CaptionListItem extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      captionData: this.props.captionData
+      caption: this.props.caption,
+      bookmarkData: this.props.caption.bookmarkData(this.props.script,this.props.needSpaces)
     }
   }
 
@@ -17,7 +18,7 @@ export default class CaptionListItem extends React.Component {
 
   createString(){
     var string = []
-    this.state.captionData.textData.map((word, i) => {
+    this.state.bookmarkData.map((word, i) => {
       if(word.isBookmarked){
         string.push(<Text key={i} style={[styles.bkmkListText,styles.bkmkActive]}>{word.text}</Text>)
       }else{
@@ -27,22 +28,28 @@ export default class CaptionListItem extends React.Component {
     return string
   }
 
+  createVideoTitle() {
+    var string = []
+    string.push(<Text key="title">{this.state.caption.video.shortTitle() + " @ " + this.state.caption.startTimeString()}</Text>)
+    return string
+  }
+
   onTapPress(){
-    LanguageHelpers.getTranslation(this.state.captionData.originalText)
-    .then((translated) => {
-      console.warn(translated)
-    })
-    .catch((errorMessage) => { console.log(errorMessage) });
+    console.warn(this.state.caption.translation)
   }
 
 
   render(){
     return (
       <TouchableOpacity
-        style={styles.bkmkListItemContainer}
         onPress={() => this.onTapPress()}
       >
-        {this.createString()}
+        <View style={styles.bkmkListItemContainer}>
+          {this.createString()}
+        </View>
+        <View>
+          {this.createVideoTitle()}
+        </View>
       </TouchableOpacity>
     )
   }

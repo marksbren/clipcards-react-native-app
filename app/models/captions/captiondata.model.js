@@ -24,11 +24,28 @@ export default class CaptionData {
     return isBookmarked
   }
 
+  startTimeString(){
+    var remainingSeconds = Math.floor(this.start / 1000)
+    var hours = Math.floor(remainingSeconds / 3600);
+    remainingSeconds = remainingSeconds - hours * 3600;
+    var minutes = Math.floor(remainingSeconds / 60)
+    remainingSeconds = remainingSeconds - minutes * 60
+
+    var timeString = ""
+    if(hours > 0){
+      timeString += hours + ":"
+      timeString += minutes + ":"
+    }else if(minutes > 0){
+      timeString += minutes + ":"
+    }else{
+      timeString += "0:"
+    }
+    timeString += remainingSeconds
+    return timeString
+  }
+
   bookmarkData(scriptIndex,insertSpace = false){
-    var bookmarkData = {}
-    bookmarkData.textData = []
-    bookmarkData.originalText = this.line
-    bookmarkData._id = this._id
+    var textData = []
 
     this.parts.map((part, i) => {
       var partData = {}
@@ -41,16 +58,16 @@ export default class CaptionData {
         partData.text += " "
       }
       partData.isBookmarked = false
-      bookmarkData.textData.push(partData)
+      textData.push(partData)
     })
 
     this.bookmarks.map((bookmark, i) => {
       if(bookmark.isActive){
-        bookmarkData.textData[bookmark.captionDataIndex].isBookmarked = true
+        textData[bookmark.captionDataIndex].isBookmarked = true
       }
     })
 
-    return bookmarkData
+    return textData
 
   }
 }
@@ -60,6 +77,7 @@ CaptionData.schema = {
   properties: {
     _id: "string",
     line: 'string',
+    translation: 'string',
     start: 'int',
     end: 'int',
     video: 'Video',

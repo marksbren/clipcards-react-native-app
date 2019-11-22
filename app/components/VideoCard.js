@@ -23,6 +23,8 @@ export default class VideoCard extends React.Component {
 
   render() {
     var lastViewedString = "Last viewed: " + TimeHelper.timeAgoString(this.state.video.lastViewedAt)
+    var bookmarkCountString = this.state.video.bookmarkCount()
+    var viewPercent = this.state.video.viewPercentage()
     return (
       <View>
         <TouchableOpacity
@@ -33,7 +35,7 @@ export default class VideoCard extends React.Component {
             source={{uri: this.state.video.videoThumbnail}}
           />
           <Text>{this.state.video.videoTitle}</Text>
-          <Text>{lastViewedString}</Text>
+          <Text>{lastViewedString} | {this.state.video.bookmarkCount()} bookmarks | {viewPercent}%</Text>
 
         </TouchableOpacity>
       </View>

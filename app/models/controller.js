@@ -145,12 +145,26 @@ export default class ModelManager {
     var captionObject = {
       _id: captionData._id,
       line: captionData.part,
+      translation: "",
       start: captionData.start,
       end: captionData.end,
       parts: captionData.words,
       video: video
     }
+    this.setTranslation(captionData)
     return captionObject
+  }
+
+  static setTranslation(captionData){
+    LanguageHelpers.getTranslation(captionData.part)
+    .then((translated) => {
+      var insertedCaption = realm.objects('CaptionData').filtered('_id = $0', captionData._id)[0]
+      console.warn(translated)
+      realm.write(() => {
+        insertedCaption.translation = translated
+      });
+    })
+    .catch((errorMessage) => { console.log(errorMessage) });
   }
 
   static insertCaptionData(captionData){
@@ -162,7 +176,6 @@ export default class ModelManager {
           line: captionData.part,
           start: captionData.start,
           end: captionData.end,
-          parts: ["these"," ","are"," ","parts"],
           video: video
         });
       });
@@ -184,7 +197,7 @@ export default class ModelManager {
       video.captionDatas.map((caption, j) => {
         // console.warn(caption.line)
         if(caption.isBookmarked()){
-          response.push(caption.bookmarkData(scriptIndex,LanguageHelpers.languageScriptNeedsSpaces(lang,scriptIndex)))
+          response.push(caption)
         }
       })
     ))
