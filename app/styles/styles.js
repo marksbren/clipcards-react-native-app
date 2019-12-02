@@ -134,5 +134,34 @@ export const styles = StyleSheet.create({
   },
   scriptSelectorSelectedText:{
     color: colors.defaultText
+  },
+  gradingButtonContainer:{
+    marginRight:0,
+    marginLeft:0,
+  },
+  gradingButton: {
+    width: (width-20)/4,
+  },
+  buttonContainer: {
+    height: 60,
+    width: width,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  gradingButton0: {
+    backgroundColor: colors.btnRed
+  },
+  gradingButton1: {
+    backgroundColor: colors.btnOrange
+  },
+  gradingButton2: {
+    backgroundColor: colors.btnYellow
+  },
+  gradingButton3: {
+    backgroundColor: colors.btnGreen
+  },
+  progressBar:{
+    color: colors.btnRed
   }
 })

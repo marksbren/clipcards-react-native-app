@@ -2,6 +2,7 @@
 import React from 'react';
 import WatchVideo from './app/views/WatchVideo';
 import BookmarkList from './app/views/BookmarkList';
+import StudyList from './app/views/StudyList';
 import HomeView from './app/views/Home';
 import PhoneSignup from './app/views/PhoneSignup';
 import { createAppContainer } from 'react-navigation';
@@ -15,6 +16,7 @@ const AppNavigator = createStackNavigator({
      screen: createBottomTabNavigator({
        Home: HomeView,
        List: BookmarkList,
+       Study: StudyList,
        Signup: PhoneSignup,
      },{
        defaultNavigationOptions: ({ navigation }) => ({

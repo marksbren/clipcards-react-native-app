@@ -1,11 +1,14 @@
 import React from 'react';
-import { Alert, Clipboard, View, Text } from 'react-native';
+import { Alert, Clipboard, View, Text, Dimensions } from 'react-native';
 import YouTube from 'react-native-youtube';
 import { Button, Icon, ButtonGroup } from 'react-native-elements';
 import {colors} from '../styles/styles';
 import {styles} from '../styles/styles'
 import LanguageHelpers from '../helpers/languageHelpers'
 import APIManager from '../networking/APIManager';
+import * as Progress from 'react-native-progress'
+
+const width = Dimensions.get('window').width
 
 import ModelManager from '../models/controller';
 
@@ -33,7 +36,9 @@ export default class CaptionPlayer extends React.Component {
       playVideo:false,
       clipboardHasYoutube: false,
       isFetching: false,
-      videoFinished: false
+      videoFinished: false,
+      videoDuration: 100,
+      videoCurrentTime: 0
     }
 
     this._youTubeRef = React.createRef()
@@ -135,6 +140,10 @@ export default class CaptionPlayer extends React.Component {
         if(this.state.captionIndex < this.state.captionData.length - 1 && moveNext){
           this.updateIndexAndPlay(currentTime)
         }
+        this.setState({
+          videoDuration: duration,
+          videoCurrentTime: currentTime
+        })
       })
     })
     .catch((errorMessage) => { console.warn(errorMessage) });
@@ -237,6 +246,7 @@ export default class CaptionPlayer extends React.Component {
   render() {
     var hasMultipleScripts = this.state.captionScripts.length > 0
     var scriptButtons = LanguageHelpers.getScripts(this.state.language)
+    var viewPercent = this.state.videoCurrentTime / this.state.videoDuration
     return (
       <View style={styles.container}>
         <YouTube
@@ -255,6 +265,9 @@ export default class CaptionPlayer extends React.Component {
           onError={e => this.setState({ error: e.error })}
           style={styles.youtubeContainer}
         />
+        <View>
+          <Progress.Bar borderWidth={0} unfilledColor='rgba(32,137,220,0.1)' color='rgba(32,137,220,1)' borderRadius={0} height={3} progress={viewPercent} width={width} />
+        </View>
         <View style={styles.videoControlContainer}>
           <Button
             key={0}
@@ -302,7 +315,7 @@ export default class CaptionPlayer extends React.Component {
             {word.type === "word" ? (
               <Button
                 key={i}
-                title={word.text[this.state.captionScriptIndex]}
+                title={word.text[this.state.captionScriptIndex] ? word.text[this.state.captionScriptIndex] : word.text[0]}
                 buttonStyle={this._wordIsSaved(this._generateWordKey(i)) ? styles.bookmarkedButton : styles.unbookmarkedButton }
                 type="outline"
                 containerStyle={[styles.wordButton]}

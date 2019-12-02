@@ -51,8 +51,13 @@ export default class LanguageHelpers {
   }
 
   static getScripts(language){
-    var languageFamily = language.split("-")[0]
-    return supportedScripts[languageFamily]
+    if(this.hasMultipleScripts(language)){
+      var languageFamily = language.split("-")[0]
+      return supportedScripts[languageFamily]
+    }else{
+      return []
+    }
+
   }
 
 }

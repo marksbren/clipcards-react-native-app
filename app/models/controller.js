@@ -123,6 +123,23 @@ export default class ModelManager {
   }
 
   //// Caption functions
+  static scoreCaption(caption,newData,toNative){
+    // console.warn(newData)
+    realm.write(() => {
+      if(toNative){
+        caption.toNativeEf = newData.ef
+        caption.toNativeInterval = newData.interval
+        caption.toNativeReps = newData.reps
+        caption.toNativeNextDueDate =  newData.nextDate
+      }else{
+        caption.toTargetEf = newData.ef
+        caption.toTargetInterval = newData.interval
+        caption.toTargetReps = newData.reps
+        caption.toTargetNextDueDate =  newData.nextDate
+      }
+    });
+  }
+
   static captionDataExists(id){
     let realmCaptions = realm.objects('CaptionData').filtered('_id = $0', id)
     if(realmCaptions.length == 0){
@@ -190,14 +207,36 @@ export default class ModelManager {
 
 
   //// Bookmark functions
-  static bookmarksForLanguage(lang,scriptIndex){
+  static bookmarksForLanguage(lang){
     var response = []
     var realmLanguage = this.getLanguage(lang)
     realmLanguage.videos.map((video, i) => (
       video.captionDatas.map((caption, j) => {
-        // console.warn(caption.line)
         if(caption.isBookmarked()){
           response.push(caption)
+        }
+      })
+    ))
+    return response
+  }
+
+  static cardsDuesForLanguage(lang){
+    var response = {
+      captions: [],
+      toNative: []
+    }
+    var realmLanguage = this.getLanguage(lang)
+    realmLanguage.videos.map((video, i) => (
+      video.captionDatas.map((caption, j) => {
+        if(caption.isBookmarked()){
+          var cardDue = caption.cardDue()
+          if(cardDue == 1){
+            response.captions.push(caption)
+            response.toNative.push(true)
+          }else if(cardDue == 1){
+            response.captions.push(caption)
+            response.toNative.push(false)
+          }
         }
       })
     ))
