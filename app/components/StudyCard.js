@@ -74,10 +74,6 @@ export default class StudyCard extends React.Component {
     return string
   }
 
-  onTapPress(){
-    console.warn(this.state.caption.translation)
-  }
-
   gradeQuestion(i){
     // console.warn(this.state.caption.getScoreCardObject(this.state.directionToNative))
     var cardObject = this.state.caption.getScoreCardObject(this.state.directionToNative)

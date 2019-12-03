@@ -50,8 +50,6 @@ export default class StudyCards extends React.Component {
       newCardsToNative.splice(newCardIndex,1)
     }
 
-    console.warn("index: "+newCardIndex+" length: "+newCardList.length)
-
     if(newCardIndex == newCardList.length){
       newCardIndex = 0
     }

@@ -13,7 +13,6 @@ export default class LanguageCard extends React.Component {
   }
 
   componentDidMount() {
-    console.warn("mounted")
   }
 
   onTapPress(){

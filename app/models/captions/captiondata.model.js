@@ -87,7 +87,6 @@ export default class CaptionData {
   }
 
   getScoreCardObject(toNative){
-    console.warn(toNative)
     var response = {}
     if(toNative){
       response = {
@@ -104,7 +103,6 @@ export default class CaptionData {
         nextDate: this.toTargetNextDueDate
       }
     }
-    console.warn(response)
     return response
   }
 
