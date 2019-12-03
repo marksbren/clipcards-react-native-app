@@ -1,8 +1,9 @@
 // In App.js in a new project
 import React from 'react';
 import WatchVideo from './app/views/WatchVideo';
+import StudyCards from './app/views/StudyCards'
 import BookmarkList from './app/views/BookmarkList';
-import StudyList from './app/views/StudyList';
+import StudyTab from './app/views/StudyTab';
 import HomeView from './app/views/Home';
 import PhoneSignup from './app/views/PhoneSignup';
 import { createAppContainer } from 'react-navigation';
@@ -16,7 +17,7 @@ const AppNavigator = createStackNavigator({
      screen: createBottomTabNavigator({
        Home: HomeView,
        List: BookmarkList,
-       Study: StudyList,
+       Study: StudyTab,
        Signup: PhoneSignup,
      },{
        defaultNavigationOptions: ({ navigation }) => ({
@@ -45,6 +46,9 @@ const AppNavigator = createStackNavigator({
    },
    video: {
      screen: WatchVideo
+   },
+   studyCards: {
+     screen: StudyCards
    }
  },
    {

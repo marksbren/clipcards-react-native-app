@@ -38,7 +38,7 @@ export default class WatchVideo extends React.Component {
     // if(youtubeRegex.test(this.state.clipboardContent)){
     //   this.setState({ clipboardHasYoutube: true })
     // }
-    
+
     //if loading from homepage
     if(this.props.navigation.state.params.language && this.props.navigation.state.params.videoId){
       this.setState({
@@ -147,7 +147,6 @@ export default class WatchVideo extends React.Component {
     }else{
       this.props.navigation.goBack()
     }
-
   }
 
   render() {

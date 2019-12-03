@@ -9,38 +9,27 @@ import LanguageHelpers from '../helpers/languageHelpers';
 import ModelManager from '../models/controller';
 
 
-export default class StudyList extends React.Component {
+export default class StudyCards extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       cardList: [],
       cardsToNative: [],
+      language: this.props.navigation.state.params.language,
       currentCardIndex: 0,
-      currentLanguageIndex: 0,
-      languageList: ModelManager.languageList(),
       cardFrontData: [0],
       buttons: []
     }
   }
 
   componentDidMount() {
-    var cardData = ModelManager.cardsDuesForLanguage(this.state.languageList[this.state.currentLanguageIndex].code)
-    var buttons = LanguageHelpers.getScripts(this.state.languageList[this.state.currentLanguageIndex].code)
+    var cardData = ModelManager.cardsDuesForLanguage(this.state.language.code)
+    var buttons = LanguageHelpers.getScripts(this.state.language.code)
 
     this.setState({
       cardList: cardData.captions,
       cardsToNative: cardData.toNative,
       buttons: buttons
-    })
-  }
-
-  changeLanguage(i){
-    var cardData = ModelManager.cardsDuesForLanguage(this.state.languageList[i].code)
-
-    this.setState({
-      cardList: cardData.captions,
-      cardsToNative: cardData.toNative,
-      currentLanguageIndex: i
     })
   }
 
@@ -74,24 +63,31 @@ export default class StudyList extends React.Component {
   }
 
 
+  goBack(){
+    this.props.navigation.goBack()
+    // if(this.state.selectedLanguage.length > 0 && this.props.navigation.state.params.onGoBack){
+    //   this.props.navigation.state.params.onGoBack(this.state.selectedLanguage)
+    //   this.props.navigation.goBack()
+    // }else{
+    //   this.props.navigation.goBack()
+    // }
+  }
+
+
 
 
   render() {
-    var langList = []
-    for(var i = 0; i < this.state.languageList.length; i++){
-      langList.push(this.state.languageList[i].code)
-    }
-    let lang = this.state.languageList[this.state.currentLanguageIndex].code
+    let lang = this.state.language.code
     var currentCaption = this.state.cardList[this.state.currentCardIndex]
     return (
       <ActionSheetProvider>
         <View style={styles.container}>
           <HomeHeader
-            titleList={langList}
-            currentTitleIndex={this.state.currentLanguageIndex}
-            onTitleChange={(i) => this.changeLanguage(i)}
+            titleList={[]}
+            currentTitleIndex={0}
+            onLeftClick={() => this.goBack()}
           />
-          {LanguageHelpers.hasMultipleScripts(this.state.languageList[this.state.currentLanguageIndex].code) &&
+          {LanguageHelpers.hasMultipleScripts(this.state.language.code) &&
             <ButtonGroup
               onPress={(i) => this.selectFrontScript(i)}
               selectedIndexes={this.state.cardFrontData}
