@@ -33,7 +33,8 @@ export default class BookmarkListView extends React.Component {
 
     this.setState({
       bookmarkList: bookmarkList,
-      currentLanguageIndex: i
+      currentLanguageIndex: i,
+      currentScriptIndex: 0
     })
   }
 
