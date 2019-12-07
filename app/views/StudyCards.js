@@ -24,7 +24,6 @@ export default class StudyCards extends React.Component {
 
   componentDidMount() {
     var buttons = LanguageHelpers.getScripts(this.state.language.code)
-
     this.setState({
       buttons: buttons
     })
@@ -84,6 +83,7 @@ export default class StudyCards extends React.Component {
   render() {
     let lang = this.state.language.code
     var currentCaption = this.state.cardList[this.state.currentCardIndex]
+    var currentToNative = this.state.cardsToNative[this.state.currentCardIndex]
     return (
       <ActionSheetProvider>
         <View style={styles.container}>
@@ -107,6 +107,7 @@ export default class StudyCards extends React.Component {
             <StudyCard
               key={currentCaption._id + this.state.cardFrontData.toString()}
               caption={currentCaption}
+              toNative={currentToNative}
               language={lang}
               frontData={this.state.cardFrontData}
               onNext={(data) => this.moveToNextCard(data)}

@@ -12,7 +12,7 @@ export default class StudyCard extends React.Component {
     super(props)
     this.state = {
       caption: this.props.caption,
-      directionToNative: true,
+      directionToNative: this.props.toNative,
       cardData: [],
       language: this.props.language,
       frontData: this.props.frontData,
@@ -44,17 +44,31 @@ export default class StudyCard extends React.Component {
     var response = []
     if(toNative){
       this.state.cardData.map((dataItem, j) => {
-        dataItem.map((word, i) => {
-          if(word.isBookmarked){
-            response.push(<Text key={j+"|"+i} style={[styles.bkmkListText,styles.bkmkActive]}>{word.text}</Text>)
-          }else{
-            response.push(<Text key={j+"|"+i} style={styles.bkmkListText}>{word.text}</Text>)
-          }
-        })
+        response.push(
+          <View style={styles.studyCardSentanceContainer}>
+            {this.toNativeStudyString(dataItem)}
+          </View>
+        )
       })
     }else{
-      response.push(<Text key='translation' style={[styles.bkmkListText]}>{this.state.caption.translation}</Text>)
+      response.push(
+        <View style={styles.studyCardSentanceContainer}>
+          <Text key='translation' style={[styles.bkmkListText]}>{this.state.caption.translation}</Text>
+        </View>
+      )
     }
+    return response
+  }
+
+  toNativeStudyString(studyData){
+    var response = []
+    studyData.map((word, i) => {
+      if(word.isBookmarked){
+        response.push(<Text key={i} style={[styles.bkmkListText,styles.bkmkActive]}>{word.text}</Text>)
+      }else{
+        response.push(<Text key={i} style={styles.bkmkListText}>{word.text}</Text>)
+      }
+    })
     return response
   }
 
@@ -98,55 +112,58 @@ export default class StudyCard extends React.Component {
 
   render(){
     return (
-      <View>
-        <View style={styles.bkmkListItemContainer}>
-          {this.createCardFrontToNative(this.state.directionToNative)}
-        </View>
-
-        {this.state.showBack &&
-          <View style={styles.bkmkListItemContainer}>
-            {this.createCardBackToNative(this.state.directionToNative)}
-          </View>
-        }
-        <View>
+      <View style={styles.cardContainer}>
+        <View style={styles.cardMetaData}>
           <TouchableOpacity
             onPress={() => this.onVideoStringPress()}
           >
             {this.createVideoTitle()}
           </TouchableOpacity>
         </View>
-        {this.state.showBack &&
+
+        <View style={styles.studyCardMain}>
           <View>
-            <View style={styles.buttonContainer}>
-              <Button
-              key={0}
-              containerViewStyle={[styles.gradingButtonContainer]}
-              buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton0]}
-              title={this.state.button0Title}//{I18n.t('retry')}
-              onPress={(data) => this.gradeQuestion(0)}
-              />
-              <Button
-              key={1}
-              containerViewStyle={[styles.gradingButtonContainer]}
-              buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton1]}
-              title={this.state.button1Title}//{I18n.t('hard')}
-              onPress={(data) => this.gradeQuestion(1)}
-              />
-              <Button
-              key={2}
-              containerViewStyle={[styles.gradingButtonContainer]}
-              buttonStyle={[styles.button, styles.gradingButton,,styles.gradingButton2]}
-              title={this.state.button2Title}//{I18n.t('medium')}
-              onPress={(data) => this.gradeQuestion(2)}
-              />
-              <Button
-              key={3}
-              containerViewStyle={[styles.gradingButtonContainer]}
-              buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton3]}
-              title={this.state.button3Title}//{I18n.t('easy')}
-              onPress={(data) => this.gradeQuestion(3)}
-              />
+            {this.createCardFrontToNative(this.state.directionToNative)}
+          </View>
+          <View>
+          {this.state.showBack &&
+            <View>
+              {this.createCardBackToNative(this.state.directionToNative)}
             </View>
+          }
+          </View>
+        </View>
+        <View style={styles.gradingButtonContainer}>
+        {this.state.showBack &&
+          <View style={styles.buttonContainer}>
+            <Button
+            key={0}
+            containerViewStyle={[styles.gradingButtonContainer]}
+            buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton0]}
+            title={this.state.button0Title}//{I18n.t('retry')}
+            onPress={(data) => this.gradeQuestion(0)}
+            />
+            <Button
+            key={1}
+            containerViewStyle={[styles.gradingButtonContainer]}
+            buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton1]}
+            title={this.state.button1Title}//{I18n.t('hard')}
+            onPress={(data) => this.gradeQuestion(1)}
+            />
+            <Button
+            key={2}
+            containerViewStyle={[styles.gradingButtonContainer]}
+            buttonStyle={[styles.button, styles.gradingButton,,styles.gradingButton2]}
+            title={this.state.button2Title}//{I18n.t('medium')}
+            onPress={(data) => this.gradeQuestion(2)}
+            />
+            <Button
+            key={3}
+            containerViewStyle={[styles.gradingButtonContainer]}
+            buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton3]}
+            title={this.state.button3Title}//{I18n.t('easy')}
+            onPress={(data) => this.gradeQuestion(3)}
+            />
           </View>
         }
         {!this.state.showBack &&
@@ -159,6 +176,7 @@ export default class StudyCard extends React.Component {
             onPress={() => this.showBack()}
           />
         }
+        </View>
 
       </View>
     )

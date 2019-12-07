@@ -163,5 +163,30 @@ export const styles = StyleSheet.create({
   },
   progressBar:{
     color: colors.btnRed
+  },
+  cardContainer:{
+    flex:1
+  },
+  cardMetaData:{
+    flex:1
+  },
+  studyCardMain:{
+    flex:4
+  },
+  studyCardSentanceContainer:{
+    width: width,
+    flexDirection:'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  studyCardback:{
+    width: width,
+    flexDirection:'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  gradingButtonContainer:{
+    flex:1
   }
+
 })

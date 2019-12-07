@@ -77,7 +77,7 @@ export default class BookmarkListView extends React.Component {
     }
     this.props.navigation.navigate("studyCards",{
       language: language,
-      cardData: cardData  
+      cardData: cardData
     })
   }
 
