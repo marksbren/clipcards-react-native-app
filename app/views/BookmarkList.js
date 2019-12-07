@@ -46,10 +46,12 @@ export default class BookmarkListView extends React.Component {
         list.push(
           <CaptionListItem
             key={lang + " " + this.state.currentScriptIndex + " " + i}
+            listItem={i}
             caption={caption}
             language={lang}
             needSpaces={needSpaces}
             script={this.state.currentScriptIndex}
+            onTap={(i) => this.selectCard(i)}
           />
         )
     })
@@ -62,6 +64,20 @@ export default class BookmarkListView extends React.Component {
     this.setState({
       currentScriptIndex: i,
       bookmarkList: bookmarkList
+    })
+  }
+
+  selectCard(i){
+    var language = this.state.languageList[this.state.currentLanguageIndex]
+    var cardList = [this.state.bookmarkList[i]]
+    var toNative = [true]
+    var cardData = {
+      toNative: toNative,
+      captions: cardList
+    }
+    this.props.navigation.navigate("studyCards",{
+      language: language,
+      cardData: cardData  
     })
   }
 

@@ -13,8 +13,8 @@ export default class StudyCards extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      cardList: [],
-      cardsToNative: [],
+      cardList: this.props.navigation.state.params.cardData.captions,
+      cardsToNative: this.props.navigation.state.params.cardData.toNative,
       language: this.props.navigation.state.params.language,
       currentCardIndex: 0,
       cardFrontData: [0],
@@ -23,12 +23,9 @@ export default class StudyCards extends React.Component {
   }
 
   componentDidMount() {
-    var cardData = ModelManager.cardsDuesForLanguage(this.state.language.code)
     var buttons = LanguageHelpers.getScripts(this.state.language.code)
 
     this.setState({
-      cardList: cardData.captions,
-      cardsToNative: cardData.toNative,
       buttons: buttons
     })
   }

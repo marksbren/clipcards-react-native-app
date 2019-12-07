@@ -24,8 +24,11 @@ export default class StudyTab extends React.Component {
 
   selectLanguage(i){
     var language = this.state.languageList[i]
+    var cardData = ModelManager.cardsDuesForLanguage(language.code)
     this.props.navigation.navigate("studyCards",{
-      language: language})
+      language: language,
+      cardData: cardData
+    })
   }
 
 

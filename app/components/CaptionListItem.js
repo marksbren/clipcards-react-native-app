@@ -35,7 +35,7 @@ export default class CaptionListItem extends React.Component {
   }
 
   onTapPress(){
-    console.warn(this.state.caption.translation)
+    this.props.onTap(this.props.listItem)
   }
 
 
