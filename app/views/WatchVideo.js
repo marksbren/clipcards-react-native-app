@@ -27,7 +27,8 @@ export default class WatchVideo extends React.Component {
       state: watchStatesEnum.preCopy,
       error: "",
       clipboardHasYoutube: false,
-      isFetching: false
+      isFetching: false,
+      videoStartTime: 0
     }
 
   }
@@ -38,6 +39,13 @@ export default class WatchVideo extends React.Component {
     // if(youtubeRegex.test(this.state.clipboardContent)){
     //   this.setState({ clipboardHasYoutube: true })
     // }
+
+
+    if(this.props.navigation.state.params.startTime){
+      this.setState({
+        videoStartTime: this.props.navigation.state.params.startTime
+      })
+    }
 
     //if loading from homepage
     if(this.props.navigation.state.params.language && this.props.navigation.state.params.videoId){
@@ -166,6 +174,7 @@ export default class WatchVideo extends React.Component {
               videoData={this.state.videoData}
               captionData={this.state.captionData} // control playback of video with true/false
               language={this.state.selectedLanguage}
+              videoStartTime={this.state.videoStartTime}
             />
           </View>
         }

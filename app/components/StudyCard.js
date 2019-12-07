@@ -88,6 +88,11 @@ export default class StudyCard extends React.Component {
     })
   }
 
+  onVideoStringPress(){
+    this.props.onVideoPress()
+  }
+
+
 
 
 
@@ -104,7 +109,11 @@ export default class StudyCard extends React.Component {
           </View>
         }
         <View>
-          {this.createVideoTitle()}
+          <TouchableOpacity
+            onPress={() => this.onVideoStringPress()}
+          >
+            {this.createVideoTitle()}
+          </TouchableOpacity>
         </View>
         {this.state.showBack &&
           <View>

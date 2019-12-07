@@ -174,6 +174,13 @@ export default class CaptionPlayer extends React.Component {
     }else if(this.state.videoData.previousPlayTime > 0){
       startTime = this.state.videoData.previousPlayTime
     }
+
+    if(this.props.videoStartTime > 0){
+      startTime = this.props.videoStartTime
+    }
+
+    console.warn(startTime)
+
     this.loadVideoToTime(startTime)
     this.updateIndex(startTime)
   }

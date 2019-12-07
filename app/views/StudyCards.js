@@ -68,6 +68,16 @@ export default class StudyCards extends React.Component {
     // }
   }
 
+  openVideo(){
+    var caption = this.state.cardList[this.state.currentCardIndex]
+    var startTime = caption.start / 1000
+    this.props.navigation.navigate("video",{
+      language: caption.video.captionLanguage,
+      videoId: caption.video.videoId,
+      startTime: startTime
+    })
+  }
+
 
 
 
@@ -100,6 +110,7 @@ export default class StudyCards extends React.Component {
               language={lang}
               frontData={this.state.cardFrontData}
               onNext={(data) => this.moveToNextCard(data)}
+              onVideoPress={() => this.openVideo()}
             />
           }
 
