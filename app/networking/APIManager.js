@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import * as Keychain from 'react-native-keychain';
 const Frisbee = require('frisbee');
+import { API_URL } from 'react-native-dotenv'
 
 // create a new instance of Frisbee
 const api = new Frisbee({
-  baseURI: "http://localhost:4040/api", // optional
+  baseURI: API_URL, // optional
   headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json'
@@ -23,11 +24,11 @@ export default class APIManager extends Component {
   _user = {}
 
   static getInstance() {
-      if (APIManager.myInstance == null) {
-          APIManager.myInstance = new APIManager();
-      }
-      APIManager.myInstance.reloadAuthToken()
-      return APIManager.myInstance;
+    if (APIManager.myInstance == null) {
+        APIManager.myInstance = new APIManager();
+    }
+    APIManager.myInstance.reloadAuthToken()
+    return APIManager.myInstance;
   }
 
   _saveAccessToken = async () => {

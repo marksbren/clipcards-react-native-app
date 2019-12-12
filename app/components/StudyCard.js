@@ -18,8 +18,6 @@ export default class StudyCard extends React.Component {
       frontData: this.props.frontData,
       button0Title: "",
       button1Title: "",
-      button2Title: "",
-      button3Title: "",
       showBack: false
     }
   }
@@ -76,9 +74,7 @@ export default class StudyCard extends React.Component {
     var buttonList = SuperMemo.getScorePreview(this.state.caption.getScoreCardObject(this.state.directionToNative))
     this.setState({
       button0Title: buttonList[0],
-      button1Title: buttonList[1],
-      button2Title: buttonList[2],
-      button3Title: buttonList[3],
+      button1Title: buttonList[1]
     })
   }
 
@@ -93,7 +89,7 @@ export default class StudyCard extends React.Component {
     var cardObject = this.state.caption.getScoreCardObject(this.state.directionToNative)
     var newCard = SuperMemo.scoreCard(cardObject,i)
     ModelManager.scoreCaption(this.state.caption,newCard,this.state.directionToNative)
-    // this.props.onNext(newCard.interval == 0)
+    this.props.onNext(newCard.interval == 0)
   }
 
   showBack(){
@@ -146,23 +142,9 @@ export default class StudyCard extends React.Component {
             <Button
             key={1}
             containerViewStyle={[styles.gradingButtonContainer]}
-            buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton1]}
-            title={this.state.button1Title}//{I18n.t('hard')}
-            onPress={(data) => this.gradeQuestion(1)}
-            />
-            <Button
-            key={2}
-            containerViewStyle={[styles.gradingButtonContainer]}
-            buttonStyle={[styles.button, styles.gradingButton,,styles.gradingButton2]}
-            title={this.state.button2Title}//{I18n.t('medium')}
-            onPress={(data) => this.gradeQuestion(2)}
-            />
-            <Button
-            key={3}
-            containerViewStyle={[styles.gradingButtonContainer]}
             buttonStyle={[styles.button, styles.gradingButton,styles.gradingButton3]}
-            title={this.state.button3Title}//{I18n.t('easy')}
-            onPress={(data) => this.gradeQuestion(3)}
+            title={this.state.button1Title}//{I18n.t('easy')}
+            onPress={(data) => this.gradeQuestion(1)}
             />
           </View>
         }

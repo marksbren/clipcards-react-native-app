@@ -140,7 +140,7 @@ export const styles = StyleSheet.create({
     marginLeft:0,
   },
   gradingButton: {
-    width: (width-20)/4,
+    width: (width-20)/2,
   },
   buttonContainer: {
     height: 60,

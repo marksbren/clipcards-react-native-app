@@ -8,7 +8,7 @@ import LanguageHelpers from '../helpers/languageHelpers';
 const Realm = require('realm')
 
 const realm = new Realm({
-  path: '/Users/marksbren/Downloads/dev.realm',
+  // path: '/Users/marksbren/Downloads/dev.realm',
   schema: [Bookmark,Video,Language,CaptionData,CaptionPart],
   deleteRealmIfMigrationNeeded: true})
 
@@ -217,7 +217,13 @@ export default class ModelManager {
         }
       })
     ))
-    return response
+
+    return this.sortCaptions(response,true)
+  }
+
+  static sortCaptions(list,sortBy){
+    var newList = list.sort(function(a, b){return a.getScoreCardObject(true).nextDate-b.getScoreCardObject(true).nextDate})
+    return newList
   }
 
   static cardsDuesForLanguage(lang){
@@ -233,7 +239,7 @@ export default class ModelManager {
           if(cardDue == 1){
             response.captions.push(caption)
             response.toNative.push(true)
-          }else if(cardDue == 1){
+          }else if(cardDue == 2){
             response.captions.push(caption)
             response.toNative.push(false)
           }

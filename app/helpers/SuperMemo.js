@@ -1,5 +1,5 @@
 var today = new Date();
-var scores = [0,2,4,5]
+var scores = [2,4]
 
 export default class SuperMemo {
 
@@ -36,10 +36,10 @@ export default class SuperMemo {
 
       switch (newCard.reps) {
         case 1:
-          newCard.interval = 1;
+          newCard.interval = 1 * (grade - 3);
           break;
         case 2:
-          newCard.interval = 6;
+          newCard.interval = 3 * (grade - 3);
           break;
         default:
           newCard.interval = Math.ceil((newCard.reps - 1) * newCard.ef);
@@ -58,7 +58,7 @@ export default class SuperMemo {
 
   static getScorePreview(card){
     // console.warn(card)
-    var intervals = [0,0,0,0]
+    var intervals = [0,0]
 
     scores.forEach(function(score,index) {
       var newCard = SuperMemo.calcIntervalEF(card,score)
