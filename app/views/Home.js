@@ -23,7 +23,8 @@ export default class HomeView extends React.Component {
       videoList: [],
       error: "",
       clipboardHasYoutube: false,
-      isFetching: false
+      isFetching: false,
+      alertShown: false,
     }
 
   }
@@ -33,12 +34,15 @@ export default class HomeView extends React.Component {
     var languageList = ModelManager.languageList()
     var videoList = languageList.length > 0 ? languageList[this.state.currentLanguageIndex].videos : []
 
-    this.readFromClipboard()
-
     this.setState({
+      clipboardCheck: setInterval(() => {this.readFromClipboard()}, 500),
       languageList: languageList,
       videoList: videoList
     })
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.clipboardCheck);
   }
 
   setupLanguage(language){
@@ -59,6 +63,9 @@ export default class HomeView extends React.Component {
   }
 
   readFromClipboard = async () => {
+    if(this.state.alertShown){
+      return
+    }
     var clipboardContent = await Clipboard.getString();
     var clipboardHasYoutube=false
     var youtubeId = ""
@@ -66,7 +73,9 @@ export default class HomeView extends React.Component {
       var match = youtubeRegex.exec(clipboardContent)
       clipboardHasYoutube = true
       youtubeId = match[1]
-      this.showYoutubeAlert()
+      if(youtubeId != this.state.previousYoutubeId){
+        this.showYoutubeAlert()
+      }
     }
     this.setState({
       clipboardContent: clipboardContent,
@@ -75,14 +84,24 @@ export default class HomeView extends React.Component {
     });
   };
 
+  cancelAlert(){
+    this.setState({
+      previousYoutubeId: this.state.youtubeId,
+      alertShown: false
+    })
+  }
+
   showYoutubeAlert(){
+    this.setState({
+      alertShown: true
+    })
     Alert.alert(
       'Youtube Video Found',
       'A Youtube Video was found in your clipboard. Import it?',
       [
         {
           text: 'No, thanks',
-          onPress: () => console.log('Cancel Pressed'),
+          onPress: () => this.cancelAlert(),
           style: 'cancel',
         },
         {text: 'OK', onPress: () => this.openNewVideo()},
@@ -100,6 +119,10 @@ export default class HomeView extends React.Component {
   }
 
   openNewVideo(){
+    this.setState({
+      previousYoutubeId: this.state.youtubeId,
+      alertShown: false
+    })
     this.props.navigation.navigate("video",{
       videoId: this.state.youtubeId,
       onGoBack: (lang) => this.setupLanguage(lang)
