@@ -187,6 +187,15 @@ export const styles = StyleSheet.create({
   },
   gradingButtonContainer:{
     flex:1
+  },
+  allVideosItem: {
+    fontSize:18,
+    alignItems: 'center',
+    color: colors.btnBlue,
+    textAlign: 'center', // <-- the magic
+    fontWeight: 'bold',
+    marginTop:20,
+    marginBottom:30
   }
 
 })

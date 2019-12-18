@@ -1,11 +1,10 @@
 import React from 'react';
-import { Alert, Clipboard, View, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { Alert, Clipboard, View, Text, SafeAreaView, ScrollView } from 'react-native';
 import YouTube from 'react-native-youtube';
 import { Button, Icon, ListItem, Header } from 'react-native-elements';
 import {styles} from '../styles/styles';
 import {colors} from '../styles/styles';
 import APIManager from '../networking/APIManager';
-import StudyListCard from '../components/StudyListCard';
 import CaptionPlayer from '../components/CaptionPlayer';
 import HomeHeader from '../components/HomeHeader';
 import VideoCard from '../components/VideoCard';
@@ -15,12 +14,11 @@ import ModelManager from '../models/controller';
 
 const youtubeRegex = /(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'<>\n $#]+)/
 
-export default class HomeView extends React.Component {
+export default class VideoList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      languageList: [],
-      currentLanguageIndex: 0,
+      language: this.props.navigation.state.params.language,
       videoList: [],
       error: "",
       clipboardHasYoutube: false,
@@ -31,13 +29,10 @@ export default class HomeView extends React.Component {
   }
 
   componentDidMount() {
-    let apiManager = APIManager.getInstance();
-    var languageList = ModelManager.languageList()
-    var videoList = languageList.length > 0 ? languageList[this.state.currentLanguageIndex].videos : []
+    var videoList = this.state.language.videos
 
     this.setState({
       clipboardCheck: setInterval(() => {this.readFromClipboard()}, 500),
-      languageList: languageList,
       videoList: videoList
     })
   }
@@ -46,22 +41,6 @@ export default class HomeView extends React.Component {
     clearInterval(this.state.clipboardCheck);
   }
 
-  setupLanguage(language){
-    var languageList = ModelManager.languageList()
-    var languageIndex = 0
-    for(var i = 0; i < languageList.length; i++){
-      if(languageList[i].code == language){
-        languageIndex = i
-      }
-    }
-
-    var videoList = languageList[languageIndex].videos
-    this.setState({
-      languageList: languageList,
-      videoList: videoList,
-      currentLanguageIndex: languageIndex
-    })
-  }
 
   readFromClipboard = async () => {
     if(this.state.alertShown){
@@ -111,22 +90,13 @@ export default class HomeView extends React.Component {
     );
   }
 
-  changeLanguage(i){
-    var videoList = this.state.languageList[i].videos
-    this.setState({
-      videoList: videoList,
-      currentLanguageIndex: i
-    })
-  }
-
   openNewVideo(){
     this.setState({
       previousYoutubeId: this.state.youtubeId,
       alertShown: false
     })
     this.props.navigation.navigate("video",{
-      videoId: this.state.youtubeId,
-      onGoBack: (lang) => this.setupLanguage(lang)
+      videoId: this.state.youtubeId
     })
   }
 
@@ -137,49 +107,15 @@ export default class HomeView extends React.Component {
       videoId: video.videoId})
   }
 
-  startStudy(){
-    var language = this.state.languageList[this.state.currentLanguageIndex]
-    var cardData = ModelManager.cardsDuesForLanguage(language.code)
-    this.props.navigation.navigate("studyCards",{
-      language: language,
-      cardData: cardData
-    })
-  }
-
-  viewAllVideos(){
-    var language = this.state.languageList[this.state.currentLanguageIndex]
-    this.props.navigation.navigate("videoList",{
-      language: language
-    })
-  }
-
   render() {
-    if(this.state.languageList.length == 0){
-      return (
-        <View style={styles.container}>
-          <Text>No Languages</Text>
-        </View>
-      )
-    }
-    var langList = []
-    for(var i = 0; i < this.state.languageList.length; i++){
-      langList.push(this.state.languageList[i].code)
-    }
-    var currentLanguage = this.state.languageList[this.state.currentLanguageIndex]
     return (
       <ActionSheetProvider>
         <View style={styles.container}>
           <HomeHeader
-            titleList={langList}
-            currentTitleIndex={this.state.currentLanguageIndex}
-            onTitleChange={(i) => this.changeLanguage(i)}
+            titleList={["Videos"]}
+            currentTitleIndex={0}
           />
           <ScrollView>
-              <StudyListCard
-                key={1}
-                language={currentLanguage}
-                onTap={() => this.startStudy()}
-              />
               {this.state.videoList.map((video, i) => (
                   <VideoCard
                     key={video.videoId + i}
@@ -192,11 +128,6 @@ export default class HomeView extends React.Component {
                   />
                 ))
               }
-              <TouchableOpacity
-                onPress={() => this.viewAllVideos()}
-              >
-                <Text style={styles.allVideosItem}>View all videos</Text>
-              </TouchableOpacity>
           </ScrollView>
         </View>
       </ActionSheetProvider>

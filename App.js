@@ -3,7 +3,7 @@ import React from 'react';
 import WatchVideo from './app/views/WatchVideo';
 import StudyCards from './app/views/StudyCards'
 import BookmarkList from './app/views/BookmarkList';
-import StudyTab from './app/views/StudyTab';
+import VideoList from './app/views/VideoList';
 import HomeView from './app/views/Home';
 import PhoneSignup from './app/views/PhoneSignup';
 import { createAppContainer } from 'react-navigation';
@@ -17,7 +17,6 @@ const AppNavigator = createStackNavigator({
      screen: createBottomTabNavigator({
        Home: HomeView,
        List: BookmarkList,
-       Study: StudyTab,
        Signup: PhoneSignup,
      },{
        defaultNavigationOptions: ({ navigation }) => ({
@@ -49,6 +48,9 @@ const AppNavigator = createStackNavigator({
    },
    studyCards: {
      screen: StudyCards
+   },
+   videoList: {
+     screen: VideoList
    }
  },
    {
