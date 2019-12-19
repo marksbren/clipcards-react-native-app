@@ -18,8 +18,12 @@ export default class Video {
   }
 
   viewPercentage(){
-    var percent = this.previousPlayTime / this.duration
-    return percent
+    if(this.duration == 0){
+      return 0
+    }else{
+      var percent = this.previousPlayTime / this.duration
+      return percent
+    }
   }
 }
 

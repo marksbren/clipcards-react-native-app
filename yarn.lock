@@ -843,15 +843,6 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@react-native-community/art@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@react-native-community/art/-/art-1.0.3.tgz#13c68d86e75d2f7cb199f58cce7a4e5ff395223a"
-  integrity sha512-gCgCBDVkpmcCzI+j6+Jv4fNvxNjAWZ7s8dDZEn52K2f5lmtdD/DV/64dZ1AyHHgA9BuDLOtRKm8QJE0DY88rgA==
-  dependencies:
-    art "^0.10.3"
-    invariant "^2.2.4"
-    prop-types "^15.7.2"
-
 "@react-native-community/cli-platform-android@^3.0.0-alpha.1", "@react-native-community/cli-platform-android@^3.0.0-alpha.2":
   version "3.0.0-alpha.2"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-3.0.0-alpha.2.tgz#63cb00060c58a87d04b46229ef7140e056551dfa"
@@ -1381,7 +1372,7 @@ array-unique@^0.3.2:
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.3.2.tgz#a894b75d4bc4f6cd679ef3244a9fd8f46ae2d428"
   integrity sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
 
-art@^0.10.0, art@^0.10.3:
+art@^0.10.0:
   version "0.10.3"
   resolved "https://registry.yarnpkg.com/art/-/art-0.10.3.tgz#b01d84a968ccce6208df55a733838c96caeeaea2"
   integrity sha512-HXwbdofRTiJT6qZX/FnchtldzJjS3vkLJxQilc3Xj+ma2MXjY4UAyQ0ls1XZYVnDvVIBiFZbC6QsvtW86TD6tQ==
@@ -5667,14 +5658,6 @@ react-native-power-translator@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-native-power-translator/-/react-native-power-translator-1.1.1.tgz#f4bf9a5a13a21618e3bf7f6c587f021677baff6c"
   integrity sha512-btDroFDjSKO6KXb4kotRjnySS+3vAC7ZgQXbLyyj/O1JA2NB8j415jZWJjIGMFgh2fodVUf8N8W31ScAEbwbcA==
-
-react-native-progress@^4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-4.0.2.tgz#4a19178b2b214c831a1375a60a54acae1fd2d843"
-  integrity sha512-oAnpF8zIMTPa9czQ5lYlSn/EO+mYkjf3LTMtCqt57yXkTrX1d89iUOTOSIEKLDtrH3e7iVdYR//2nizPPQejbQ==
-  dependencies:
-    "@react-native-community/art" "^1.0.3"
-    prop-types "^15.7.2"
 
 react-native-ratings@^6.3.0:
   version "6.5.0"

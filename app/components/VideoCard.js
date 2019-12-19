@@ -3,7 +3,7 @@ import { Alert, Clipboard, View, Text, Image, TouchableOpacity } from 'react-nat
 import {styles} from '../styles/styles';
 import {colors} from '../styles/styles';
 import TimeHelper from '../helpers/timeHelpers';
-import * as Progress from 'react-native-progress'
+import ProgressBar from '../components/ProgressBar'
 
 
 export default class VideoCard extends React.Component {
@@ -28,17 +28,14 @@ export default class VideoCard extends React.Component {
     var viewPercent = this.state.video.viewPercentage()
     return (
       <View>
-        <TouchableOpacity
-          onPress={() => this.onTapPress()}
-        >
+        <TouchableOpacity onPress={() => this.onTapPress()}>
           <Image
             style={styles.videoCard}
             source={{uri: this.state.video.videoThumbnail}}
           />
-          <Progress.Bar borderWidth={0} unfilledColor='rgba(32,137,220,0.1)' color='rgba(32,137,220,1)' borderRadius={0} height={3} progress={viewPercent} width={null} />
+          <ProgressBar percentage={viewPercent}/>
           <Text>{this.state.video.videoTitle}</Text>
           <Text>{lastViewedString} | {this.state.video.bookmarkCount()} bookmarks </Text>
-
         </TouchableOpacity>
       </View>
     )

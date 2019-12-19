@@ -196,6 +196,15 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop:20,
     marginBottom:30
+  },
+  emptyProgress:{
+    backgroundColor: 'rgba(32,137,220,0.1)',
+    width: width,
+    height: 4
+  },
+  currentProgress:{
+    height: 4,
+    backgroundColor: 'rgba(32,137,220,1.0)',
   }
 
 })

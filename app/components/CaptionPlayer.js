@@ -1,14 +1,12 @@
 import React from 'react';
-import { Alert, Clipboard, View, Text, Dimensions } from 'react-native';
+import { Alert, Clipboard, View, Text } from 'react-native';
 import YouTube from 'react-native-youtube';
 import { Button, Icon, ButtonGroup } from 'react-native-elements';
 import {colors} from '../styles/styles';
 import {styles} from '../styles/styles'
 import LanguageHelpers from '../helpers/languageHelpers'
+import ProgressBar from '../components/ProgressBar'
 import APIManager from '../networking/APIManager';
-import * as Progress from 'react-native-progress'
-
-const width = Dimensions.get('window').width
 
 import ModelManager from '../models/controller';
 
@@ -273,7 +271,7 @@ export default class CaptionPlayer extends React.Component {
           style={styles.youtubeContainer}
         />
         <View>
-          <Progress.Bar borderWidth={0} unfilledColor='rgba(32,137,220,0.1)' color='rgba(32,137,220,1)' borderRadius={0} height={3} progress={viewPercent} width={width} />
+          <ProgressBar percentage={viewPercent}/>
         </View>
         <View style={styles.videoControlContainer}>
           <Button
